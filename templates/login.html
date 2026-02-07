@@ -89,11 +89,18 @@
     box-sizing: border-box;
   }
 
+  html, body {
+    height: 100%;
+  }
+
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 100vh;
     background: linear-gradient(135deg, #fce4ec 0%, #e3f2fd 50%, #f3e5f5 100%);
     background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   /* Grid pattern overlay */
@@ -112,17 +119,21 @@
     z-index: 0;
   }
 
+  /* Hide default JupyterHub navbar */
+  .navbar {
+    display: none !important;
+  }
+
+  /* Login main container inside our card */
   #login-main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    display: block;
+    padding: 0;
     width: 100%;
-    padding: 20px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1;
+  }
+
+  #login-main.container {
+    max-width: 100%;
+    padding: 0;
   }
 
   .login-wrapper {
@@ -133,6 +144,9 @@
     width: 100%;
     max-width: 480px;
     margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
   }
 
   .login-card {
