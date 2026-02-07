@@ -47,36 +47,41 @@ Gets you into a terminal in your pod so you can look around.
 
 Add to the Z2JH config file. Uses the `alpine/git` image as an initContainer to clone the repo and move the template files to the right places.
 ```yaml
-  hub:
-    initContainers:
-      - name: git-clone-templates
-        image: alpine/git
-        command:
-          - /bin/sh
-          - -c
-        args:
-          - >-
-              git clone --branch=master https://github.com/nmfs-opensci/jupyterhub-templates.git &&
-              cp -r jupyterhub-templates/templates/* /templates &&
-              cp -r jupyterhub-templates/extra-assets/* /extra-assets
-        volumeMounts:
-          - name: custom-templates
-            mountPath: /templates
-          - name: custom-templates-extra-assets
-            mountPath: /extra-assets
-    extraVolumes:
-      - name: custom-templates
-        emptyDir: {}
-      - name: custom-templates-extra-assets
-        emptyDir: {}
-    extraVolumeMounts:
-      - name: custom-templates
-        mountPath: /usr/local/share/jupyterhub/custom_templates
-      - name: custom-templates-static
-        mountPath: /usr/local/share/jupyterhub/static/extra_assets
-    extraConfig:
-      templates: |
-        c.JupyterHub.template_paths = ['/usr/local/share/jupyterhub/custom_templates/']
+hub:
+  initContainers:
+    - name: git-clone-templates
+      image: alpine/git
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+      command:
+        - /bin/sh
+        - -c
+      args:
+        - >-
+            cd /tmp &&
+            git clone --branch=master https://github.com/nmfs-opensci/jupyterhub-templates.git &&
+            cp -r jupyterhub-templates/templates/* /templates &&
+            cp -r jupyterhub-templates/extra-assets/* /extra-assets
+      volumeMounts:
+        - name: custom-templates
+          mountPath: /templates
+        - name: custom-templates-extra-assets
+          mountPath: /extra-assets
+  extraVolumes:
+    - name: custom-templates
+      emptyDir: {}
+    - name: custom-templates-extra-assets
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: custom-templates
+      mountPath: /usr/local/share/jupyterhub/custom_templates
+    - name: custom-templates-extra-assets
+      mountPath: /usr/local/share/jupyterhub/static/extra_assets
+  extraConfig:
+    templates: |
+      c.JupyterHub.template_paths = ['/usr/local/share/jupyterhub/custom_templates/']
 ```
 
 In your templates, you will refer to items from extra_assets with things like this
