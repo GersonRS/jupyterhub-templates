@@ -1,0 +1,287 @@
+{% extends "templates/spawn_pending.html" %}
+
+{% block stylesheet %}
+{{ super() }}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #2196F3;
+    --primary-dark: #1976D2;
+    --secondary: #00BCD4;
+    --accent: #FF9800;
+    --success: #4CAF50;
+    --bg-dark: #0D1117;
+    --bg-surface: #161B22;
+    --bg-card: #21262D;
+    --text-primary: #E6EDF3;
+    --text-secondary: #8B949E;
+    --border-color: #30363D;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    background: var(--bg-dark);
+    background-image: 
+      radial-gradient(ellipse at top, #1a2744 0%, transparent 50%),
+      radial-gradient(ellipse at bottom right, #0d2137 0%, transparent 50%);
+    background-attachment: fixed;
+    color: var(--text-primary);
+  }
+
+  /* Grid pattern overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+      linear-gradient(rgba(33, 150, 243, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(33, 150, 243, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Hide default elements */
+  .navbar,
+  #header,
+  footer {
+    display: none !important;
+  }
+
+  .pending-wrapper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    z-index: 1;
+  }
+
+  .pending-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 
+      0 0 0 1px rgba(33, 150, 243, 0.1),
+      0 20px 50px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Spinner Animation */
+  .spinner-container {
+    margin-bottom: 24px;
+  }
+
+  .spinner {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .spinner-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent;
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1.5s linear infinite;
+  }
+
+  .spinner-ring:nth-child(2) {
+    width: 60px;
+    height: 60px;
+    top: 10px;
+    left: 10px;
+    border-top-color: var(--secondary);
+    animation-duration: 1.2s;
+    animation-direction: reverse;
+  }
+
+  .spinner-ring:nth-child(3) {
+    width: 40px;
+    height: 40px;
+    top: 20px;
+    left: 20px;
+    border-top-color: var(--accent);
+    animation-duration: 0.9s;
+  }
+
+  .spinner-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 28px;
+    height: 28px;
+    color: var(--primary);
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .pending-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .pending-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+
+  /* Progress Steps */
+  .progress-steps {
+    text-align: left;
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .progress-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .progress-step.active {
+    color: var(--primary);
+  }
+
+  .progress-step.done {
+    color: var(--success);
+  }
+
+  .progress-step-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .progress-step.active .progress-step-icon {
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* Log Output */
+  .log-output {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    max-height: 150px;
+    overflow-y: auto;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .log-output pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  /* Footer */
+  .pending-footer {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .pending-footer a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .pending-footer a:hover {
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="pending-wrapper">
+  <div class="pending-card">
+    <!-- Spinner -->
+    <div class="spinner-container">
+      <div class="spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <svg class="spinner-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 2L3 9v14l13 7 13-7V9L16 2z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="4" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <h2 class="pending-title">Iniciando seu servidor...</h2>
+    <p class="pending-subtitle">Preparando o ambiente Jupyter Notebook</p>
+
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+      <div class="progress-step done">
+        <span class="progress-step-icon">✓</span>
+        <span>Autenticação concluída</span>
+      </div>
+      <div class="progress-step active">
+        <span class="progress-step-icon">●</span>
+        <span>Provisionando recursos...</span>
+      </div>
+      <div class="progress-step">
+        <span class="progress-step-icon">○</span>
+        <span>Configurando ambiente</span>
+      </div>
+      <div class="progress-step">
+        <span class="progress-step-icon">○</span>
+        <span>Iniciando JupyterLab</span>
+      </div>
+    </div>
+
+    <!-- Event Log -->
+    <div class="log-output" id="progress-log">
+      <pre id="progress-message">{{ progress.message if progress else 'Aguardando...' }}</pre>
+    </div>
+
+    <div class="pending-footer">
+      <p>Isso pode levar até 2 minutos. <a href="{{ base_url }}">Cancelar</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}
