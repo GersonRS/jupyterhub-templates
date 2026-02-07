@@ -96,17 +96,35 @@
     #kubespawner-profiles-list .profile {
         background: var(--bg-secondary) !important;
         border: 2px solid var(--border-color) !important;
-        border-radius: 12px !important;
-        padding: 1.5rem !important;
-        cursor: pointer !important;
+        border-radius: 16px !important;
+        padding: 2rem !important;
+        cursor: default !important;
         transition: all 0.3s ease !important;
         display: flex !important;
-        align-items: flex-start !important;
-        gap: 1rem !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
         margin: 0 !important;
     }
 
-    #kubespawner-profiles-list .profile:hover {
+    /* When there's only one profile with options, hide the radio and make it full width */
+    #kubespawner-profiles-list .profile:only-child {
+        border-color: var(--accent-blue) !important;
+        background: linear-gradient(135deg, rgba(33, 150, 243, 0.05) 0%, rgba(0, 188, 212, 0.05) 100%) !important;
+    }
+
+    #kubespawner-profiles-list .profile:only-child .radio {
+        display: none !important;
+    }
+
+    /* Multiple profiles - keep original styling */
+    #kubespawner-profiles-list .profile:not(:only-child) {
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        cursor: pointer !important;
+        padding: 1.5rem !important;
+    }
+
+    #kubespawner-profiles-list .profile:not(:only-child):hover {
         border-color: var(--accent-blue) !important;
         box-shadow: var(--shadow-glow) !important;
         transform: translateY(-2px);
@@ -139,7 +157,7 @@
 
     #kubespawner-profiles-list .profile h3 {
         color: var(--text-primary) !important;
-        font-size: 1.15rem !important;
+        font-size: 1.25rem !important;
         font-weight: 600 !important;
         margin: 0 0 0.5rem 0 !important;
         font-family: 'Inter', sans-serif !important;
@@ -148,38 +166,116 @@
     #kubespawner-profiles-list .profile p {
         color: var(--text-secondary) !important;
         font-size: 0.9rem !important;
-        margin: 0 !important;
-        font-family: 'JetBrains Mono', monospace !important;
+        margin: 0 0 1.5rem 0 !important;
+        font-family: 'Inter', sans-serif !important;
     }
 
-    /* Profile options (dropdowns) */
+    /* Profile options container */
+    #kubespawner-profiles-list .profile .options-container,
+    #kubespawner-profiles-list .profile .js-options-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1.5rem !important;
+        margin-top: 0.5rem !important;
+    }
+
+    /* Profile options (dropdowns) - Section styling */
     #kubespawner-profiles-list .profile .option {
-        margin-top: 1rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        margin-top: 0 !important;
         padding: 0 !important;
+        padding-bottom: 1rem !important;
+        border-bottom: 1px solid var(--border-color) !important;
+    }
+
+    #kubespawner-profiles-list .profile .option:last-child {
+        border-bottom: none !important;
         padding-bottom: 0 !important;
     }
 
     #kubespawner-profiles-list .profile .option label {
-        color: var(--text-secondary) !important;
-        font-size: 0.85rem !important;
-        font-weight: 500 !important;
+        color: var(--accent-cyan) !important;
+        font-size: 0.9rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+    }
+
+    #kubespawner-profiles-list .profile .option label::before {
+        content: '⚡' !important;
+        font-size: 1rem !important;
     }
 
     #kubespawner-profiles-list .profile .option select,
-    #kubespawner-profiles-list .profile .option input {
+    #kubespawner-profiles-list .profile .option input[type="text"] {
         background: var(--bg-tertiary) !important;
-        border: 1px solid var(--border-color) !important;
+        border: 2px solid var(--border-color) !important;
         color: var(--text-primary) !important;
-        padding: 0.5rem 1rem !important;
-        border-radius: 6px !important;
+        padding: 0.875rem 1.25rem !important;
+        border-radius: 10px !important;
         font-family: 'Inter', sans-serif !important;
+        font-size: 0.95rem !important;
         cursor: pointer !important;
+        width: 100% !important;
+        transition: all 0.2s ease !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238B949E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 1rem center !important;
+        background-size: 1.25rem !important;
+        padding-right: 3rem !important;
+    }
+
+    #kubespawner-profiles-list .profile .option select:hover,
+    #kubespawner-profiles-list .profile .option input[type="text"]:hover {
+        border-color: var(--accent-blue) !important;
     }
 
     #kubespawner-profiles-list .profile .option select:focus,
-    #kubespawner-profiles-list .profile .option input:focus {
+    #kubespawner-profiles-list .profile .option input[type="text"]:focus {
         outline: none !important;
         border-color: var(--accent-blue) !important;
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2) !important;
+    }
+
+    /* Select option styling (for dropdown items) */
+    #kubespawner-profiles-list .profile .option select option {
+        background: var(--bg-tertiary) !important;
+        color: var(--text-primary) !important;
+        padding: 0.75rem 1rem !important;
+    }
+
+    /* Other input container (unlisted choice) */
+    #kubespawner-profiles-list .profile .js-other-input-container {
+        margin-top: 0.75rem !important;
+    }
+
+    #kubespawner-profiles-list .profile .js-other-input-container input {
+        background: var(--bg-tertiary) !important;
+        border: 2px solid var(--border-color) !important;
+        color: var(--text-primary) !important;
+        padding: 0.875rem 1.25rem !important;
+        border-radius: 10px !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 0.9rem !important;
+        width: 100% !important;
+        transition: all 0.2s ease !important;
+    }
+
+    #kubespawner-profiles-list .profile .js-other-input-container input:focus {
+        outline: none !important;
+        border-color: var(--accent-blue) !important;
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2) !important;
+    }
+
+    #kubespawner-profiles-list .profile .js-other-input-container input::placeholder {
+        color: var(--text-muted) !important;
     }
 
     /* Submit Button */
