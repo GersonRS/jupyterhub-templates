@@ -1,569 +1,323 @@
-{% extends "templates/spawn.html" %}
+{% extends "page.html" %}
 
-{% block stylesheet %}
-{{ super() }}
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --primary: #2196F3;
-    --primary-dark: #1976D2;
-    --secondary: #00BCD4;
-    --accent: #FF9800;
-    --success: #4CAF50;
-    --bg-dark: #0D1117;
-    --bg-surface: #161B22;
-    --bg-card: #21262D;
-    --bg-card-hover: #292E36;
-    --text-primary: #E6EDF3;
-    --text-secondary: #8B949E;
-    --border-color: #30363D;
-    --border-active: #2196F3;
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    min-height: 100vh;
-    background: var(--bg-dark);
-    background-image: 
-      radial-gradient(ellipse at top, #1a2744 0%, transparent 50%),
-      radial-gradient(ellipse at bottom right, #0d2137 0%, transparent 50%);
-    background-attachment: fixed;
-    color: var(--text-primary);
-  }
-
-  /* Grid pattern overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-      linear-gradient(rgba(33, 150, 243, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(33, 150, 243, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Hide default elements */
-  .navbar,
-  #header,
-  footer {
-    display: none !important;
-  }
-
-  #spawn-main {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    padding: 0;
-  }
-
-  .container {
-    max-width: 900px !important;
-    margin: 0 auto;
-    padding: 20px;
-  }
-
-  /* Custom Header */
-  .spawn-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
-    margin-bottom: 30px;
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .spawn-header-logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .spawn-header-logo-icon {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-  }
-
-  .spawn-header-logo-icon svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  .spawn-header-logo-text h1 {
-    font-size: 18px;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0;
-  }
-
-  .spawn-header-logo-text span {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9px;
-    color: var(--text-secondary);
-    letter-spacing: 1.5px;
-  }
-
-  .spawn-header-user {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: var(--text-secondary);
-  }
-
-  .spawn-header-user .status-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--success);
-    border-radius: 50%;
-  }
-
-  .spawn-header-user strong {
-    color: var(--text-primary);
-  }
-
-  /* Page Title */
-  .spawn-title {
-    text-align: center;
-    margin-bottom: 40px;
-  }
-
-  .spawn-title h2 {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 8px;
-  }
-
-  .spawn-title p {
-    font-size: 14px;
-    color: var(--text-secondary);
-  }
-
-  /* Section */
-  .spawn-section {
-    margin-bottom: 32px;
-  }
-
-  .spawn-section-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .spawn-section-icon {
-    width: 32px;
-    height: 32px;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-  }
-
-  .spawn-section-icon svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .spawn-section-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  /* Profile Cards Grid */
-  .profile-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
-  }
-
-  .profile-card {
-    background: var(--bg-card);
-    border: 2px solid var(--border-color);
-    border-radius: 12px;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-  }
-
-  .profile-card:hover {
-    background: var(--bg-card-hover);
-    border-color: var(--primary);
-    transform: translateY(-2px);
-  }
-
-  .profile-card.selected {
-    border-color: var(--primary);
-    background: rgba(33, 150, 243, 0.1);
-  }
-
-  .profile-card.selected::after {
-    content: '✓';
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 24px;
-    height: 24px;
-    background: var(--primary);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-  }
-
-  .profile-card-badge {
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--accent);
-    color: #000;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 12px;
-  }
-
-  .profile-card-icon {
-    width: 48px;
-    height: 48px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 14px;
-    color: var(--primary);
-  }
-
-  .profile-card-icon svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  .profile-card h3 {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 6px;
-  }
-
-  .profile-card p {
-    font-size: 12px;
-    color: var(--text-secondary);
-    margin-bottom: 14px;
-  }
-
-  .profile-card-specs {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .profile-card-spec {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--text-secondary);
-  }
-
-  .profile-card-spec svg {
-    width: 14px;
-    height: 14px;
-    color: var(--secondary);
-  }
-
-  /* Image Options */
-  .image-options {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .image-option {
-    background: var(--bg-card);
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
-    padding: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  .image-option:hover {
-    background: var(--bg-card-hover);
-    border-color: var(--primary);
-  }
-
-  .image-option.selected {
-    border-color: var(--primary);
-    background: rgba(33, 150, 243, 0.1);
-  }
-
-  .image-option.selected::after {
-    content: '✓';
-    margin-left: auto;
-    width: 20px;
-    height: 20px;
-    background: var(--primary);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10px;
-    font-weight: bold;
-  }
-
-  .image-option-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--primary);
-  }
-
-  .image-option-info h4 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .image-option-info h4 .version-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 500;
-    background: rgba(0, 188, 212, 0.15);
-    color: var(--secondary);
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
-
-  .image-option-info p {
-    font-size: 11px;
-    color: var(--text-secondary);
-    margin-top: 2px;
-  }
-
-  /* Submit Button */
-  .spawn-submit {
-    text-align: center;
-    margin-top: 40px;
-  }
-
-  .spawn-submit .btn,
-  .spawn-submit input[type="submit"],
-  .spawn-submit button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    min-width: 280px;
-    padding: 16px 40px;
-    font-family: 'Inter', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: white !important;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
-    border: none !important;
-    border-radius: 12px !important;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(33, 150, 243, 0.3);
-  }
-
-  .spawn-submit .btn:hover,
-  .spawn-submit input[type="submit"]:hover,
-  .spawn-submit button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(33, 150, 243, 0.4);
-  }
-
-  .spawn-submit .time-estimate {
-    display: block;
-    margin-top: 12px;
-    font-size: 12px;
-    color: var(--text-secondary);
-  }
-
-  /* Form styling */
-  form {
-    margin: 0;
-  }
-
-  select, input[type="text"] {
-    width: 100%;
-    padding: 12px 16px;
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    color: var(--text-primary);
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    outline: none;
-    transition: border-color 0.2s ease;
-  }
-
-  select:focus, input[type="text"]:focus {
-    border-color: var(--primary);
-  }
-
-  select option {
-    background: var(--bg-card);
-    color: var(--text-primary);
-  }
-
-  label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
-  }
-
-  /* Radio buttons styling */
-  input[type="radio"] {
-    display: none;
-  }
-
-  input[type="radio"] + label {
-    cursor: pointer;
-  }
-
-  /* Hide default JupyterHub form elements styling */
-  .form-group {
-    margin-bottom: 20px;
-  }
-
-  /* Custom Footer */
-  .spawn-footer {
-    text-align: center;
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-color);
-  }
-
-  .spawn-footer p {
-    font-size: 11px;
-    color: var(--text-secondary);
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .spawn-header {
-      flex-direction: column;
-      gap: 16px;
-      text-align: center;
+    :root {
+        --bg-primary: #0D1117;
+        --bg-secondary: #161B22;
+        --bg-tertiary: #21262D;
+        --border-color: #30363D;
+        --text-primary: #F0F6FC;
+        --text-secondary: #8B949E;
+        --text-muted: #6E7681;
+        --accent-blue: #2196F3;
+        --accent-cyan: #00BCD4;
+        --accent-purple: #9C27B0;
+        --accent-green: #4CAF50;
+        --gradient-primary: linear-gradient(135deg, #2196F3 0%, #00BCD4 100%);
+        --shadow-glow: 0 0 20px rgba(33, 150, 243, 0.3);
     }
 
-    .profile-cards {
-      grid-template-columns: 1fr;
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
-    .image-options {
-      grid-template-columns: 1fr;
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        background: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+        min-height: 100vh;
     }
 
-    .spawn-title h2 {
-      font-size: 22px;
+    /* Override Bootstrap navbar */
+    .navbar {
+        background: var(--bg-secondary) !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        padding: 1rem 2rem !important;
     }
-  }
+
+    .navbar-brand, .navbar a {
+        color: var(--text-primary) !important;
+    }
+
+    .nav-link {
+        color: var(--text-secondary) !important;
+    }
+
+    .nav-link:hover {
+        color: var(--text-primary) !important;
+    }
+
+    #login_widget span {
+        color: var(--text-secondary) !important;
+    }
+
+    .btn-outline-contrast {
+        border-color: var(--border-color) !important;
+        color: var(--text-secondary) !important;
+    }
+
+    .btn-outline-contrast:hover {
+        border-color: var(--accent-blue) !important;
+        color: var(--accent-blue) !important;
+        background: transparent !important;
+    }
+
+    #dark-theme-toggle {
+        color: var(--text-secondary) !important;
+    }
+
+    /* Main container */
+    .container {
+        max-width: 800px !important;
+        padding: 3rem 2rem !important;
+    }
+
+    .container h1 {
+        font-size: 2rem !important;
+        font-weight: 600 !important;
+        color: var(--text-primary) !important;
+        margin-bottom: 2rem !important;
+    }
+
+    /* Override KubeSpawner default styles */
+    #kubespawner-profiles-list {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+
+    #kubespawner-profiles-list .profile {
+        background: var(--bg-secondary) !important;
+        border: 2px solid var(--border-color) !important;
+        border-radius: 12px !important;
+        padding: 1.5rem !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        display: flex !important;
+        align-items: flex-start !important;
+        gap: 1rem !important;
+        margin: 0 !important;
+    }
+
+    #kubespawner-profiles-list .profile:hover {
+        border-color: var(--accent-blue) !important;
+        box-shadow: var(--shadow-glow) !important;
+        transform: translateY(-2px);
+    }
+
+    #kubespawner-profiles-list .profile:has(input:checked) {
+        border-color: var(--accent-blue) !important;
+        background: rgba(33, 150, 243, 0.1) !important;
+        box-shadow: var(--shadow-glow) !important;
+    }
+
+    #kubespawner-profiles-list .profile .radio {
+        padding: 4px 0 0 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    #kubespawner-profiles-list .profile .radio input[type="radio"] {
+        width: 20px !important;
+        height: 20px !important;
+        accent-color: var(--accent-blue) !important;
+        cursor: pointer !important;
+        margin: 0 !important;
+    }
+
+    #kubespawner-profiles-list .profile > div:last-child {
+        flex: 1;
+    }
+
+    #kubespawner-profiles-list .profile h3 {
+        color: var(--text-primary) !important;
+        font-size: 1.15rem !important;
+        font-weight: 600 !important;
+        margin: 0 0 0.5rem 0 !important;
+        font-family: 'Inter', sans-serif !important;
+    }
+
+    #kubespawner-profiles-list .profile p {
+        color: var(--text-secondary) !important;
+        font-size: 0.9rem !important;
+        margin: 0 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+    }
+
+    /* Profile options (dropdowns) */
+    #kubespawner-profiles-list .profile .option {
+        margin-top: 1rem !important;
+        padding: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    #kubespawner-profiles-list .profile .option label {
+        color: var(--text-secondary) !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+    }
+
+    #kubespawner-profiles-list .profile .option select,
+    #kubespawner-profiles-list .profile .option input {
+        background: var(--bg-tertiary) !important;
+        border: 1px solid var(--border-color) !important;
+        color: var(--text-primary) !important;
+        padding: 0.5rem 1rem !important;
+        border-radius: 6px !important;
+        font-family: 'Inter', sans-serif !important;
+        cursor: pointer !important;
+    }
+
+    #kubespawner-profiles-list .profile .option select:focus,
+    #kubespawner-profiles-list .profile .option input:focus {
+        outline: none !important;
+        border-color: var(--accent-blue) !important;
+    }
+
+    /* Submit Button */
+    .feedback-container {
+        margin-top: 2rem !important;
+    }
+
+    .btn-jupyter,
+    #spawn_form button[type="submit"],
+    #spawn_form .btn,
+    .form-control[type="submit"] {
+        width: 100% !important;
+        background: var(--gradient-primary) !important;
+        border: none !important;
+        color: white !important;
+        padding: 1rem 2rem !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        font-family: 'Inter', sans-serif !important;
+        text-transform: none !important;
+        letter-spacing: 0 !important;
+    }
+
+    .btn-jupyter:hover,
+    #spawn_form button[type="submit"]:hover,
+    #spawn_form .btn:hover,
+    .form-control[type="submit"]:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4) !important;
+    }
+
+    .btn-jupyter:disabled,
+    #spawn_form button[type="submit"]:disabled {
+        opacity: 0.7 !important;
+        cursor: not-allowed !important;
+        transform: none !important;
+    }
+
+    /* Feedback widget (loading spinner) */
+    .feedback-widget {
+        display: flex !important;
+        justify-content: center !important;
+        margin-top: 1rem !important;
+    }
+
+    .feedback-widget .fa-spinner {
+        color: var(--accent-blue) !important;
+        font-size: 1.5rem !important;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    /* Modal styling */
+    .modal-content {
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 12px !important;
+        color: var(--text-primary) !important;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--border-color) !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--border-color) !important;
+    }
+
+    .modal-title {
+        color: var(--text-primary) !important;
+    }
+
+    .btn-close {
+        filter: invert(1) !important;
+    }
+
+    .alert-danger {
+        background: rgba(244, 67, 54, 0.1) !important;
+        border: 1px solid #F44336 !important;
+        color: #F44336 !important;
+        border-radius: 8px !important;
+        padding: 1rem !important;
+    }
+
+    /* JupyterHub logo override */
+    #jupyterhub-logo .jpy-logo {
+        filter: brightness(0) invert(1);
+        height: 40px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container {
+            padding: 2rem 1rem !important;
+        }
+
+        .container h1 {
+            font-size: 1.5rem !important;
+        }
+
+        #kubespawner-profiles-list .profile {
+            padding: 1rem !important;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block main %}
 <div class="container">
-  <!-- Custom Header -->
-  <div class="spawn-header">
-    <div class="spawn-header-logo">
-      <div class="spawn-header-logo-icon">
-        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16 2L3 9v14l13 7 13-7V9L16 2z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-          <circle cx="16" cy="16" r="4" stroke="currentColor" stroke-width="1.5"/>
-        </svg>
-      </div>
-      <div class="spawn-header-logo-text">
-        <h1>Modern GitOps Stack</h1>
-        <span>JUPYTER NOTEBOOK</span>
-      </div>
+    <div class="row text-center">
+        <h1>Server Options</h1>
     </div>
-    <div class="spawn-header-user">
-      <span class="status-dot"></span>
-      Conectado como <strong>{{user.name}}</strong>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <form enctype="multipart/form-data" id="spawn_form" action="{{url}}" method="post" role="form">
+                {{ spawner_options_form | safe }}
+                <br>
+                <div class="feedback-container">
+                    <button type="submit" class="btn btn-jupyter form-control">Start Server</button>
+                    <div class="feedback-widget hidden">
+                        <i class="fa fa-spinner fa-pulse"></i>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
-
-  <!-- Page Title -->
-  <div class="spawn-title">
-    <h2>Configure seu Ambiente</h2>
-    <p>Escolha os recursos e a imagem para seu servidor Jupyter</p>
-  </div>
-
-  <!-- Spawn Form -->
-  <form method="POST" action="{{url}}" id="spawn-form">
-    {{xsrf_token}}
-
-    {% if spawner_options_form %}
-    <div class="spawner-options">
-      {{ spawner_options_form | safe }}
-    </div>
-    {% endif %}
-
-    <!-- Submit Button -->
-    <div class="spawn-submit">
-      <button type="submit" class="btn btn-jupyter">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-        </svg>
-        Iniciar Servidor
-      </button>
-      <span class="time-estimate">Tempo estimado: ~30 segundos</span>
-    </div>
-  </form>
-
-  <!-- Footer -->
-  <div class="spawn-footer">
-    <p>© 2026 Modern GitOps Stack. Cloud-native infrastructure as code.</p>
-  </div>
 </div>
+
+<script>
+    // Setup onSubmit feedback
+    $('form').submit((e) => {
+        var form = $(e.target);
+        form.find('.feedback-container>button').attr('disabled', true);
+        form.find('.feedback-container>*').toggleClass('hidden');
+    });
+</script>
 {% endblock %}

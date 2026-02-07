@@ -1,287 +1,268 @@
-{% extends "templates/spawn_pending.html" %}
+{% extends "page.html" %}
 
-{% block stylesheet %}
-{{ super() }}
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --primary: #2196F3;
-    --primary-dark: #1976D2;
-    --secondary: #00BCD4;
-    --accent: #FF9800;
-    --success: #4CAF50;
-    --bg-dark: #0D1117;
-    --bg-surface: #161B22;
-    --bg-card: #21262D;
-    --text-primary: #E6EDF3;
-    --text-secondary: #8B949E;
-    --border-color: #30363D;
-  }
+    :root {
+        --bg-primary: #0D1117;
+        --bg-secondary: #161B22;
+        --bg-tertiary: #21262D;
+        --border-color: #30363D;
+        --text-primary: #F0F6FC;
+        --text-secondary: #8B949E;
+        --text-muted: #6E7681;
+        --accent-blue: #2196F3;
+        --accent-cyan: #00BCD4;
+        --gradient-primary: linear-gradient(135deg, #2196F3 0%, #00BCD4 100%);
+    }
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        background: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+        min-height: 100vh;
+    }
 
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    min-height: 100vh;
-    background: var(--bg-dark);
-    background-image: 
-      radial-gradient(ellipse at top, #1a2744 0%, transparent 50%),
-      radial-gradient(ellipse at bottom right, #0d2137 0%, transparent 50%);
-    background-attachment: fixed;
-    color: var(--text-primary);
-  }
+    /* Override Bootstrap navbar */
+    .navbar {
+        background: var(--bg-secondary) !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        padding: 1rem 2rem !important;
+    }
 
-  /* Grid pattern overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-      linear-gradient(rgba(33, 150, 243, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(33, 150, 243, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
-  }
+    .navbar-brand, .navbar a {
+        color: var(--text-primary) !important;
+    }
 
-  /* Hide default elements */
-  .navbar,
-  #header,
-  footer {
-    display: none !important;
-  }
+    .nav-link {
+        color: var(--text-secondary) !important;
+    }
 
-  .pending-wrapper {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 500px;
-    padding: 20px;
-    z-index: 1;
-  }
+    #login_widget span {
+        color: var(--text-secondary) !important;
+    }
 
-  .pending-card {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 40px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 
-      0 0 0 1px rgba(33, 150, 243, 0.1),
-      0 20px 50px rgba(0, 0, 0, 0.5);
-  }
+    .btn-outline-contrast {
+        border-color: var(--border-color) !important;
+        color: var(--text-secondary) !important;
+    }
 
-  /* Spinner Animation */
-  .spinner-container {
-    margin-bottom: 24px;
-  }
+    #dark-theme-toggle {
+        color: var(--text-secondary) !important;
+    }
 
-  .spinner {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto;
-    position: relative;
-  }
+    #jupyterhub-logo .jpy-logo {
+        filter: brightness(0) invert(1);
+        height: 40px;
+    }
 
-  .spinner-ring {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: 3px solid transparent;
-    border-top-color: var(--primary);
-    border-radius: 50%;
-    animation: spin 1.5s linear infinite;
-  }
+    /* Main container */
+    .container {
+        max-width: 600px !important;
+        padding: 4rem 2rem !important;
+    }
 
-  .spinner-ring:nth-child(2) {
-    width: 60px;
-    height: 60px;
-    top: 10px;
-    left: 10px;
-    border-top-color: var(--secondary);
-    animation-duration: 1.2s;
-    animation-direction: reverse;
-  }
+    .container h1 {
+        font-size: 1.75rem !important;
+        font-weight: 600 !important;
+        color: var(--text-primary) !important;
+        margin-bottom: 2rem !important;
+    }
 
-  .spinner-ring:nth-child(3) {
-    width: 40px;
-    height: 40px;
-    top: 20px;
-    left: 20px;
-    border-top-color: var(--accent);
-    animation-duration: 0.9s;
-  }
+    /* Spinner */
+    .spinner-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 2rem 0;
+    }
 
-  .spinner-icon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 28px;
-    height: 28px;
-    color: var(--primary);
-  }
+    .spinner {
+        width: 80px;
+        height: 80px;
+        position: relative;
+    }
 
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+    .spinner-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 3px solid transparent;
+        border-radius: 50%;
+        animation: spin 1.5s linear infinite;
+    }
 
-  .pending-title {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 8px;
-  }
+    .spinner-ring:nth-child(1) {
+        border-top-color: var(--accent-blue);
+        animation-delay: 0s;
+    }
 
-  .pending-subtitle {
-    font-size: 14px;
-    color: var(--text-secondary);
-    margin-bottom: 24px;
-  }
+    .spinner-ring:nth-child(2) {
+        width: 70%;
+        height: 70%;
+        top: 15%;
+        left: 15%;
+        border-right-color: var(--accent-cyan);
+        animation-delay: 0.1s;
+        animation-direction: reverse;
+    }
 
-  /* Progress Steps */
-  .progress-steps {
-    text-align: left;
-    background: var(--bg-card);
-    border-radius: 10px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
+    .spinner-ring:nth-child(3) {
+        width: 40%;
+        height: 40%;
+        top: 30%;
+        left: 30%;
+        border-bottom-color: var(--accent-blue);
+        animation-delay: 0.2s;
+    }
 
-  .progress-step {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 0;
-    font-size: 13px;
-    color: var(--text-secondary);
-  }
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
 
-  .progress-step.active {
-    color: var(--primary);
-  }
+    /* Progress message */
+    #progress-message {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        text-align: center;
+        margin: 1.5rem 0;
+    }
 
-  .progress-step.done {
-    color: var(--success);
-  }
+    /* Progress log */
+    #progress-log-container {
+        margin-top: 2rem;
+    }
 
-  .progress-step-icon {
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    #progress-log {
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 8px !important;
+        padding: 1rem !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 0.8rem !important;
+        max-height: 300px;
+        overflow-y: auto;
+        color: var(--text-secondary) !important;
+    }
 
-  .progress-step.active .progress-step-icon {
-    animation: pulse 1s ease-in-out infinite;
-  }
+    #progress-log pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
 
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
+    /* Cancel link */
+    .cancel-container {
+        text-align: center;
+        margin-top: 2rem;
+    }
 
-  /* Log Output */
-  .log-output {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 12px;
-    max-height: 150px;
-    overflow-y: auto;
-    text-align: left;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: var(--text-secondary);
-  }
+    .cancel-container a {
+        color: var(--text-muted) !important;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+    }
 
-  .log-output pre {
-    margin: 0;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
+    .cancel-container a:hover {
+        color: var(--text-secondary) !important;
+    }
 
-  /* Footer */
-  .pending-footer {
-    margin-top: 20px;
-    font-size: 12px;
-    color: var(--text-secondary);
-  }
-
-  .pending-footer a {
-    color: var(--primary);
-    text-decoration: none;
-  }
-
-  .pending-footer a:hover {
-    text-decoration: underline;
-  }
+    /* Responsive */
+    @media (max-width: 768px) {
+        .container {
+            padding: 2rem 1rem !important;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block main %}
-<div class="pending-wrapper">
-  <div class="pending-card">
-    <!-- Spinner -->
-    <div class="spinner-container">
-      <div class="spinner">
-        <div class="spinner-ring"></div>
-        <div class="spinner-ring"></div>
-        <div class="spinner-ring"></div>
-        <svg class="spinner-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M16 2L3 9v14l13 7 13-7V9L16 2z" stroke="currentColor" stroke-width="1.5" fill="none"/>
-          <circle cx="16" cy="16" r="4" stroke="currentColor" stroke-width="1.5"/>
-        </svg>
-      </div>
+<div class="container">
+    <div class="text-center">
+        <h1>Your server is starting up</h1>
+        
+        <div class="spinner-container">
+            <div class="spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+        </div>
+        
+        <p id="progress-message">You will be redirected soon...</p>
     </div>
-
-    <h2 class="pending-title">Iniciando seu servidor...</h2>
-    <p class="pending-subtitle">Preparando o ambiente Jupyter Notebook</p>
-
-    <!-- Progress Steps -->
-    <div class="progress-steps">
-      <div class="progress-step done">
-        <span class="progress-step-icon">✓</span>
-        <span>Autenticação concluída</span>
-      </div>
-      <div class="progress-step active">
-        <span class="progress-step-icon">●</span>
-        <span>Provisionando recursos...</span>
-      </div>
-      <div class="progress-step">
-        <span class="progress-step-icon">○</span>
-        <span>Configurando ambiente</span>
-      </div>
-      <div class="progress-step">
-        <span class="progress-step-icon">○</span>
-        <span>Iniciando JupyterLab</span>
-      </div>
+    
+    <div id="progress-log-container">
+        <div id="progress-log">
+            <pre id="progress-log-content"></pre>
+        </div>
     </div>
-
-    <!-- Event Log -->
-    <div class="log-output" id="progress-log">
-      <pre id="progress-message">{{ progress.message if progress else 'Aguardando...' }}</pre>
+    
+    <div class="cancel-container">
+        <a href="{{cancel_url}}">Cancel</a>
     </div>
-
-    <div class="pending-footer">
-      <p>Isso pode levar até 2 minutos. <a href="{{ base_url }}">Cancelar</a></p>
-    </div>
-  </div>
 </div>
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script type="text/javascript">
+var defined = function(x) {
+    return typeof x !== 'undefined';
+}
+
+var defined_or = function(x, d) {
+    return defined(x) ? x : d;
+}
+
+var progress_url = "{{ progress_url }}";
+var current_html_version = defined_or("{{ html_message_version }}", 0);
+var event_source = new EventSource(progress_url);
+
+event_source.onmessage = function(e) {
+    var data = JSON.parse(e.data);
+    
+    // Handle ready state
+    if (data.ready) {
+        event_source.close();
+        window.location.reload();
+        return;
+    }
+    
+    // Handle failed state
+    if (data.failed) {
+        event_source.close();
+        var failMsg = data.message || 'Spawn failed';
+        document.getElementById('progress-message').innerHTML = '<span style="color: #F44336;">' + failMsg + '</span>';
+        return;
+    }
+    
+    // Handle HTML message
+    if (data.html_message) {
+        if (defined(data.html_message_version) && data.html_message_version > current_html_version) {
+            current_html_version = data.html_message_version;
+            document.getElementById('progress-message').innerHTML = data.html_message;
+        }
+    } else if (data.message) {
+        document.getElementById('progress-message').textContent = data.message;
+    }
+    
+    // Handle progress log
+    if (data.progress) {
+        var log = document.getElementById('progress-log-content');
+        var logContainer = document.getElementById('progress-log');
+        log.textContent += data.progress + '\n';
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+};
+
+event_source.onerror = function(e) {
+    console.log('EventSource error:', e);
+    document.getElementById('progress-message').innerHTML = '<span style="color: #FF9800;">Connection lost. Retrying...</span>';
+};
+</script>
 {% endblock %}
