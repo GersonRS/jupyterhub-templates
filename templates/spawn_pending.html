@@ -2,74 +2,20 @@
 
 {% block stylesheet %}
 {{ super() }}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --bg-primary: #0D1117;
-        --bg-secondary: #161B22;
-        --bg-tertiary: #21262D;
-        --border-color: #30363D;
-        --text-primary: #F0F6FC;
-        --text-secondary: #8B949E;
-        --text-muted: #6E7681;
-        --accent-blue: #2196F3;
-        --accent-cyan: #00BCD4;
-        --gradient-primary: linear-gradient(135deg, #2196F3 0%, #00BCD4 100%);
-    }
-
-    body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-        background: var(--bg-primary) !important;
-        color: var(--text-primary) !important;
-        min-height: 100vh;
-    }
-
-    /* Override Bootstrap navbar */
-    .navbar {
-        background: var(--bg-secondary) !important;
-        border-bottom: 1px solid var(--border-color) !important;
-        padding: 1rem 2rem !important;
-    }
-
-    .navbar-brand, .navbar a {
-        color: var(--text-primary) !important;
-    }
-
-    .nav-link {
-        color: var(--text-secondary) !important;
-    }
-
-    #login_widget span {
-        color: var(--text-secondary) !important;
-    }
-
-    .btn-outline-contrast {
-        border-color: var(--border-color) !important;
-        color: var(--text-secondary) !important;
-    }
-
-    #dark-theme-toggle {
-        color: var(--text-secondary) !important;
-    }
-
-    #jupyterhub-logo .jpy-logo {
-        filter: brightness(0) invert(1);
-        height: 40px;
-    }
-
     /* Main container */
-    .container {
-        max-width: 600px !important;
-        padding: 4rem 2rem !important;
+    .pending-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+        text-align: center;
     }
 
-    .container h1 {
-        font-size: 1.75rem !important;
-        font-weight: 600 !important;
-        color: var(--text-primary) !important;
-        margin-bottom: 2rem !important;
+    .pending-container h1 {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 2rem;
     }
 
     /* Spinner */
@@ -212,45 +158,43 @@
     }
 
     .cancel-container a {
-        color: var(--text-muted) !important;
+        color: var(--text-muted);
         text-decoration: none;
         font-size: 0.9rem;
         transition: color 0.2s;
     }
 
     .cancel-container a:hover {
-        color: var(--text-secondary) !important;
+        color: var(--text-secondary);
     }
 
     /* Responsive */
     @media (max-width: 768px) {
-        .container {
-            padding: 2rem 1rem !important;
+        .pending-container {
+            padding: 2rem 1rem;
         }
     }
 </style>
 {% endblock %}
 
 {% block main %}
-<div class="container">
-    <div class="text-center">
-        <h1>Iniciando seu servidor</h1>
-        
-        <div class="spinner-container">
-            <div class="spinner">
-                <div class="spinner-ring"></div>
-                <div class="spinner-ring"></div>
-                <div class="spinner-ring"></div>
-            </div>
+<div class="pending-container">
+    <h1>Iniciando seu servidor</h1>
+    
+    <div class="spinner-container">
+        <div class="spinner">
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
         </div>
-        
-        <div class="progress-bar-container">
-            <div class="progress-bar-fill" id="progress-bar"></div>
-        </div>
-        <div class="progress-percentage" id="progress-percentage">0%</div>
-        
-        <p id="progress-message">Você será redirecionado em breve...</p>
     </div>
+    
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+    <div class="progress-percentage" id="progress-percentage">0%</div>
+    
+    <p id="progress-message">Você será redirecionado em breve...</p>
     
     <div id="progress-log-container">
         <div id="progress-log">

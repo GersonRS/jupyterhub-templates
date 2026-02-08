@@ -31,49 +31,163 @@
         min-height: 100vh;
     }
 
-    /* Override Bootstrap navbar */
+    /* Hide default JupyterHub navbar */
     .navbar {
-        background: var(--bg-secondary) !important;
-        border-bottom: 1px solid var(--border-color) !important;
-        padding: 0.75rem 1.5rem !important;
+        display: none !important;
     }
 
-    .navbar-brand, .navbar a {
-        color: var(--text-primary) !important;
+    /* Custom Header */
+    .custom-header {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.75rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
-    .nav-link {
-        color: var(--text-secondary) !important;
-        transition: color 0.2s !important;
+    .header-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
     }
 
-    .nav-link:hover {
-        color: var(--text-primary) !important;
+    .header-brand:hover {
+        text-decoration: none;
     }
 
-    #login_widget span {
-        color: var(--text-secondary) !important;
+    .header-logo {
+        width: 40px;
+        height: 40px;
+        background: var(--gradient-primary);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .btn-outline-contrast {
-        border-color: var(--border-color) !important;
-        color: var(--text-secondary) !important;
-        transition: all 0.2s !important;
+    .header-logo svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
     }
 
-    .btn-outline-contrast:hover {
-        border-color: var(--accent-blue) !important;
-        color: var(--accent-blue) !important;
-        background: transparent !important;
+    .header-text {
+        display: flex;
+        flex-direction: column;
     }
 
-    #dark-theme-toggle {
-        color: var(--text-secondary) !important;
+    .header-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.2;
     }
 
-    #jupyterhub-logo .jpy-logo {
-        filter: brightness(0) invert(1);
-        height: 36px;
+    .header-subtitle {
+        font-size: 0.65rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .header-nav {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .header-link {
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.9rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+
+    .header-link:hover {
+        color: var(--text-primary);
+        background: var(--bg-tertiary);
+        text-decoration: none;
+    }
+
+    .header-link.active {
+        color: var(--accent-blue);
+        background: rgba(33, 150, 243, 0.1);
+    }
+
+    .header-user {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: 1rem;
+        padding-left: 1rem;
+        border-left: 1px solid var(--border-color);
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--accent-green);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    .user-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .btn-logout {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-left: 1rem;
+    }
+
+    .btn-logout:hover {
+        border-color: var(--accent-red);
+        color: var(--accent-red);
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+        .custom-header {
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+        }
+        .header-nav {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .header-user {
+            margin-left: 0;
+            padding-left: 0;
+            border-left: none;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border-color);
+        }
     }
 
     /* Container */
@@ -273,4 +387,44 @@
         color: #000 !important;
     }
 </style>
+{% endblock %}
+
+{% block nav %}
+<header class="custom-header">
+    <a href="{{ base_url }}" class="header-brand">
+        <div class="header-logo">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+        </div>
+        <div class="header-text">
+            <span class="header-title">Modern GitOps Stack</span>
+            <span class="header-subtitle">Jupyter Enterprise</span>
+        </div>
+    </a>
+    <div class="header-nav">
+        <a href="{{ base_url }}home" class="header-link">
+            <i class="fa fa-home"></i> Home
+        </a>
+        <a href="{{ base_url }}spawn" class="header-link">
+            <i class="fa fa-server"></i> Novo Servidor
+        </a>
+        <a href="{{ base_url }}token" class="header-link">
+            <i class="fa fa-key"></i> Token
+        </a>
+        {% if user.admin %}
+        <a href="{{ base_url }}admin" class="header-link">
+            <i class="fa fa-cog"></i> Admin
+        </a>
+        {% endif %}
+        <div class="header-user">
+            <span class="status-dot"></span>
+            <span class="user-label"><span class="user-name">{{ user.name }}</span></span>
+        </div>
+        <a href="{{ base_url }}logout" class="btn-logout">
+            <i class="fa fa-sign-out"></i>
+            Logout
+        </a>
+    </div>
+</header>
 {% endblock %}

@@ -2,161 +2,7 @@
 
 {% block stylesheet %}
 {{ super() }}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --bg-primary: #0D1117;
-        --bg-secondary: #161B22;
-        --bg-tertiary: #21262D;
-        --bg-card: #1A1F26;
-        --border-color: #30363D;
-        --border-active: #2196F3;
-        --text-primary: #F0F6FC;
-        --text-secondary: #8B949E;
-        --text-muted: #6E7681;
-        --accent-blue: #2196F3;
-        --accent-cyan: #00BCD4;
-        --accent-purple: #9C27B0;
-        --accent-green: #4CAF50;
-        --accent-orange: #FF9800;
-        --gradient-primary: linear-gradient(135deg, #2196F3 0%, #00BCD4 100%);
-        --shadow-glow: 0 0 20px rgba(33, 150, 243, 0.3);
-    }
-
-    body {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-        background: var(--bg-primary) !important;
-        color: var(--text-primary) !important;
-        min-height: 100vh;
-    }
-
-    /* Hide default JupyterHub navbar */
-    .navbar {
-        display: none !important;
-    }
-
-    /* Custom Header */
-    .custom-header {
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        max-width: 1100px;
-        margin: 0 auto;
-    }
-
-    .header-brand {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        text-decoration: none;
-    }
-
-    .header-logo {
-        width: 40px;
-        height: 40px;
-        background: var(--gradient-primary);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .header-logo svg {
-        width: 24px;
-        height: 24px;
-        fill: white;
-    }
-
-    .header-text {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .header-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        background: var(--gradient-primary);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        line-height: 1.2;
-    }
-
-    .header-subtitle {
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        font-weight: 500;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-    }
-
-    .header-user {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .status-dot {
-        width: 8px;
-        height: 8px;
-        background: var(--accent-green);
-        border-radius: 50%;
-        box-shadow: 0 0 8px var(--accent-green);
-    }
-
-    .user-label {
-        font-size: 0.9rem;
-        color: var(--text-secondary);
-    }
-
-    .user-name {
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-
-    .header-actions {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .header-link {
-        color: var(--text-secondary);
-        text-decoration: none;
-        font-size: 0.9rem;
-        padding: 0.5rem 0.75rem;
-        border-radius: 6px;
-        transition: all 0.2s;
-    }
-
-    .header-link:hover {
-        color: var(--text-primary);
-        background: var(--bg-tertiary);
-    }
-
-    .btn-logout {
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-secondary);
-        padding: 0.4rem 0.75rem;
-        border-radius: 6px;
-        font-size: 0.85rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-    }
-
-    .btn-logout:hover {
-        border-color: var(--accent-blue);
-        color: var(--accent-blue);
-    }
-
     /* Hide default spawner form */
     #kubespawner-profiles-list { display: none !important; }
 
@@ -377,7 +223,7 @@
     }
 
     /* Loading spinner */
-    .spinner {
+    .spawn-spinner {
         display: none;
         width: 20px;
         height: 20px;
@@ -391,51 +237,12 @@
         to { transform: rotate(360deg); }
     }
 
-    .loading .spinner { display: block; }
+    .loading .spawn-spinner { display: block; }
     .loading .btn-text { display: none; }
-
-    @media (max-width: 768px) {
-        .custom-header {
-            flex-direction: column;
-            gap: 1rem;
-            padding: 1rem;
-        }
-        .header-actions {
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-    }
 </style>
 {% endblock %}
 
 {% block main %}
-<!-- Custom Header -->
-<header class="custom-header">
-    <a href="/hub/" class="header-brand">
-        <div class="header-logo">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-        </div>
-        <div class="header-text">
-            <span class="header-title">Modern GitOps Stack</span>
-            <span class="header-subtitle">Jupyter Enterprise</span>
-        </div>
-    </a>
-    <div class="header-actions">
-        <a href="/hub/home" class="header-link">Home</a>
-        <a href="/hub/token" class="header-link">Token</a>
-        <div class="header-user">
-            <span class="status-dot"></span>
-            <span class="user-label">Conectado como <span class="user-name">{{ user.name }}</span></span>
-        </div>
-        <a href="/hub/logout" class="btn-logout">
-            <i class="fa fa-sign-out"></i>
-            Logout
-        </a>
-    </div>
-</header>
-
 <div class="spawn-container">
     <div class="spawn-header">
         <h1>Configure seu Ambiente</h1>
@@ -538,7 +345,7 @@
             <button type="submit" class="submit-btn">
                 <i class="fa fa-rocket btn-text"></i>
                 <span class="btn-text">Iniciar Servidor</span>
-                <div class="spinner"></div>
+                <div class="spawn-spinner"></div>
             </button>
             <div class="submit-hint">Tempo estimado: ~30 segundos</div>
         </div>
