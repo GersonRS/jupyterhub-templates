@@ -132,6 +132,56 @@
         margin: 1.5rem 0;
     }
 
+    /* Progress bar */
+    .progress-bar-container {
+        width: 100%;
+        max-width: 400px;
+        margin: 1.5rem auto;
+        background: var(--bg-tertiary);
+        border-radius: 10px;
+        height: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border-color);
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        background: var(--gradient-primary);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+        width: 0%;
+        position: relative;
+    }
+
+    .progress-bar-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+        );
+        animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .progress-percentage {
+        text-align: center;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--accent-cyan);
+        margin-top: 0.75rem;
+    }
+
     /* Progress log */
     #progress-log-container {
         margin-top: 2rem;
@@ -184,7 +234,7 @@
 {% block main %}
 <div class="container">
     <div class="text-center">
-        <h1>Your server is starting up</h1>
+        <h1>Iniciando seu servidor</h1>
         
         <div class="spinner-container">
             <div class="spinner">
@@ -194,7 +244,12 @@
             </div>
         </div>
         
-        <p id="progress-message">You will be redirected soon...</p>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+        <div class="progress-percentage" id="progress-percentage">0%</div>
+        
+        <p id="progress-message">Você será redirecionado em breve...</p>
     </div>
     
     <div id="progress-log-container">
@@ -204,7 +259,7 @@
     </div>
     
     <div class="cancel-container">
-        <a href="{{cancel_url}}">Cancel</a>
+        <a href="{{cancel_url}}">Cancelar</a>
     </div>
 </div>
 {% endblock %}
@@ -224,11 +279,22 @@ var progress_url = "{{ progress_url }}";
 var current_html_version = defined_or("{{ html_message_version }}", 0);
 var event_source = new EventSource(progress_url);
 
+var progressBar = document.getElementById('progress-bar');
+var progressPercentage = document.getElementById('progress-percentage');
+var currentProgress = 0;
+
+function updateProgressBar(percent) {
+    currentProgress = Math.min(100, Math.max(0, percent));
+    progressBar.style.width = currentProgress + '%';
+    progressPercentage.textContent = Math.round(currentProgress) + '%';
+}
+
 event_source.onmessage = function(e) {
     var data = JSON.parse(e.data);
     
     // Handle ready state
     if (data.ready) {
+        updateProgressBar(100);
         event_source.close();
         window.location.reload();
         return;
@@ -237,9 +303,29 @@ event_source.onmessage = function(e) {
     // Handle failed state
     if (data.failed) {
         event_source.close();
-        var failMsg = data.message || 'Spawn failed';
+        var failMsg = data.message || 'Falha ao iniciar servidor';
         document.getElementById('progress-message').innerHTML = '<span style="color: #F44336;">' + failMsg + '</span>';
+        progressBar.style.background = '#F44336';
         return;
+    }
+    
+    // Handle progress percentage
+    if (defined(data.progress)) {
+        // data.progress can be a number (percentage) or a string (log message)
+        if (typeof data.progress === 'number') {
+            updateProgressBar(data.progress);
+        } else if (typeof data.progress === 'string') {
+            // Try to extract percentage from string like "50%" or just log it
+            var percentMatch = data.progress.match(/(\d+)%/);
+            if (percentMatch) {
+                updateProgressBar(parseInt(percentMatch[1]));
+            }
+            // Log the message
+            var log = document.getElementById('progress-log-content');
+            var logContainer = document.getElementById('progress-log');
+            log.textContent += data.progress + '\n';
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
     }
     
     // Handle HTML message
@@ -250,20 +336,17 @@ event_source.onmessage = function(e) {
         }
     } else if (data.message) {
         document.getElementById('progress-message').textContent = data.message;
-    }
-    
-    // Handle progress log
-    if (data.progress) {
-        var log = document.getElementById('progress-log-content');
-        var logContainer = document.getElementById('progress-log');
-        log.textContent += data.progress + '\n';
-        logContainer.scrollTop = logContainer.scrollHeight;
+        // Try to extract percentage from message
+        var percentMatch = data.message.match(/(\d+)%/);
+        if (percentMatch) {
+            updateProgressBar(parseInt(percentMatch[1]));
+        }
     }
 };
 
 event_source.onerror = function(e) {
     console.log('EventSource error:', e);
-    document.getElementById('progress-message').innerHTML = '<span style="color: #FF9800;">Connection lost. Retrying...</span>';
+    document.getElementById('progress-message').innerHTML = '<span style="color: #FF9800;">Conexão perdida. Reconectando...</span>';
 };
 </script>
 {% endblock %}
