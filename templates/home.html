@@ -259,7 +259,7 @@
     </div>
     {% endif %}
 
-    {% if named_server_limit > 0 %}
+    {% if named_server_limit | default(0) > 0 %}
     <div class="named-servers-section">
         <h2 class="section-title">
             <i class="fa fa-layer-group"></i>
@@ -320,7 +320,7 @@
         {% endif %}
         {% endfor %}
 
-        {% if (servers | length) < named_server_limit %}
+        {% if (servers | length) < (named_server_limit | default(0)) %}
         <a href="{{ new_server_url }}" class="btn-action secondary" style="margin-top: 0.5rem;">
             <i class="fa fa-plus"></i>
             Novo Servidor Nomeado
