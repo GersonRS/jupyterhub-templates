@@ -202,7 +202,6 @@
         <p class="welcome-subtitle">Gerencie seus servidores Jupyter</p>
     </div>
 
-    {% if default_server %}
     <div class="server-card">
         <div class="server-header">
             <div class="server-info">
@@ -215,6 +214,9 @@
                         {% if default_server.active %}
                         <span class="status-dot running"></span>
                         Executando
+                        {% elif default_server.pending %}
+                        <span class="status-dot" style="background: var(--accent-yellow); box-shadow: 0 0 8px var(--accent-yellow);"></span>
+                        {{ default_server.pending }}...
                         {% else %}
                         <span class="status-dot stopped"></span>
                         Parado
@@ -224,21 +226,21 @@
             </div>
             <div class="server-actions">
                 {% if default_server.active %}
-                <a href="{{ default_server.url }}" class="btn-action primary">
+                <a href="{{ url }}" class="btn-action primary" id="start">
                     <i class="fa fa-external-link"></i>
                     Abrir
                 </a>
-                <a href="{{ default_server.stop_url }}" class="btn-action danger">
+                <button id="stop" class="btn-action danger">
                     <i class="fa fa-stop"></i>
                     Parar
-                </a>
+                </button>
                 {% elif default_server.pending %}
                 <span class="btn-action secondary">
                     <i class="fa fa-spinner fa-spin"></i>
                     {{ default_server.pending }}...
                 </span>
                 {% else %}
-                <a href="{{ spawn_url }}" class="btn-action primary">
+                <a href="{{ url }}" class="btn-action primary" id="start">
                     <i class="fa fa-play"></i>
                     Iniciar
                 </a>
@@ -246,38 +248,26 @@
             </div>
         </div>
     </div>
-    {% else %}
-    <div class="server-card">
-        <div class="no-server">
-            <i class="fa fa-cube"></i>
-            <p>Nenhum servidor configurado</p>
-            <a href="{{ spawn_url }}" class="btn-action primary" style="margin-top: 1rem;">
-                <i class="fa fa-plus"></i>
-                Criar Servidor
-            </a>
-        </div>
-    </div>
-    {% endif %}
 
-    {% if named_server_limit | default(0) > 0 %}
+    {% if allow_named_servers %}
     <div class="named-servers-section">
         <h2 class="section-title">
             <i class="fa fa-layer-group"></i>
             Servidores Nomeados
         </h2>
         
-        {% for server in servers %}
-        {% if server.name %}
-        <div class="server-card">
+        {% set named_spawners = user.all_spawners(include_default=False)|list %}
+        {% for spawner in named_spawners %}
+        <div class="server-card" data-server-name="{{ spawner.name }}">
             <div class="server-header">
                 <div class="server-info">
                     <div class="server-icon">
                         <i class="fa fa-cube"></i>
                     </div>
                     <div>
-                        <div class="server-name">{{ server.name }}</div>
+                        <div class="server-name">{{ spawner.name }}</div>
                         <div class="server-status">
-                            {% if server.active %}
+                            {% if spawner.active %}
                             <span class="status-dot running"></span>
                             Executando
                             {% else %}
@@ -288,45 +278,54 @@
                     </div>
                 </div>
                 <div class="server-actions">
-                    {% if server.active %}
-                    <a href="{{ server.url }}" class="btn-action primary">
+                    {% if spawner.active %}
+                    <a href="{{ user.server_url(spawner.name) }}" class="btn-action primary">
                         <i class="fa fa-external-link"></i>
                         Abrir
                     </a>
-                    <a href="{{ server.stop_url }}" class="btn-action danger">
+                    <button class="btn-action danger stop-server" id="stop-{{ spawner.name }}">
                         <i class="fa fa-stop"></i>
                         Parar
-                    </a>
-                    {% elif server.pending %}
+                    </button>
+                    {% elif spawner.pending %}
                     <span class="btn-action secondary">
                         <i class="fa fa-spinner fa-spin"></i>
-                        {{ server.pending }}...
+                        {{ spawner.pending }}...
                     </span>
                     {% else %}
-                    <a href="{{ server.spawn_url }}" class="btn-action primary">
+                    <a href="{{ base_url }}spawn/{{ user.name }}/{{ spawner.name }}" class="btn-action primary start-server">
                         <i class="fa fa-play"></i>
                         Iniciar
                     </a>
-                    <form action="{{ server.delete_url }}" method="post" style="display: inline;">
-                        <button type="submit" class="btn-action danger">
-                            <i class="fa fa-trash"></i>
-                            Excluir
-                        </button>
-                    </form>
+                    <button class="btn-action danger delete-server" id="delete-{{ spawner.name }}">
+                        <i class="fa fa-trash"></i>
+                        Excluir
+                    </button>
                     {% endif %}
                 </div>
             </div>
         </div>
-        {% endif %}
         {% endfor %}
 
-        {% if (servers | length) < (named_server_limit | default(0)) %}
-        <a href="{{ new_server_url }}" class="btn-action secondary" style="margin-top: 0.5rem;">
-            <i class="fa fa-plus"></i>
-            Novo Servidor Nomeado
-        </a>
-        {% endif %}
+        <div class="new-server-form" style="margin-top: 1rem;">
+            <div style="display: flex; gap: 0.5rem;">
+                <input type="text" class="new-server-name" placeholder="nome-do-servidor" 
+                    style="flex: 1; padding: 0.5rem 1rem; border-radius: 6px; background: var(--bg-tertiary); 
+                    border: 1px solid var(--border-color); color: var(--text-primary);">
+                <button class="btn-action primary new-server-btn">
+                    <i class="fa fa-plus"></i>
+                    Novo Servidor
+                </button>
+            </div>
+        </div>
     </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block script %}
+{{ super() }}
+<script type="text/javascript">
+require(["home"]);
+</script>
 {% endblock %}
