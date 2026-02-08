@@ -10,7 +10,9 @@
         --bg-primary: #0D1117;
         --bg-secondary: #161B22;
         --bg-tertiary: #21262D;
+        --bg-card: #1A1F26;
         --border-color: #30363D;
+        --border-active: #2196F3;
         --text-primary: #F0F6FC;
         --text-secondary: #8B949E;
         --text-muted: #6E7681;
@@ -18,14 +20,9 @@
         --accent-cyan: #00BCD4;
         --accent-purple: #9C27B0;
         --accent-green: #4CAF50;
+        --accent-orange: #FF9800;
         --gradient-primary: linear-gradient(135deg, #2196F3 0%, #00BCD4 100%);
         --shadow-glow: 0 0 20px rgba(33, 150, 243, 0.3);
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
     }
 
     body {
@@ -39,382 +36,405 @@
     .navbar {
         background: var(--bg-secondary) !important;
         border-bottom: 1px solid var(--border-color) !important;
-        padding: 1rem 2rem !important;
     }
 
-    .navbar-brand, .navbar a {
-        color: var(--text-primary) !important;
-    }
+    .navbar-brand, .navbar a { color: var(--text-primary) !important; }
+    .nav-link { color: var(--text-secondary) !important; }
+    .nav-link:hover { color: var(--text-primary) !important; }
+    #login_widget span { color: var(--text-secondary) !important; }
+    .btn-outline-contrast { border-color: var(--border-color) !important; color: var(--text-secondary) !important; }
+    #dark-theme-toggle { color: var(--text-secondary) !important; }
+    #jupyterhub-logo .jpy-logo { filter: brightness(0) invert(1); height: 36px; }
 
-    .nav-link {
-        color: var(--text-secondary) !important;
-    }
-
-    .nav-link:hover {
-        color: var(--text-primary) !important;
-    }
-
-    #login_widget span {
-        color: var(--text-secondary) !important;
-    }
-
-    .btn-outline-contrast {
-        border-color: var(--border-color) !important;
-        color: var(--text-secondary) !important;
-    }
-
-    .btn-outline-contrast:hover {
-        border-color: var(--accent-blue) !important;
-        color: var(--accent-blue) !important;
-        background: transparent !important;
-    }
-
-    #dark-theme-toggle {
-        color: var(--text-secondary) !important;
-    }
+    /* Hide default spawner form */
+    #kubespawner-profiles-list { display: none !important; }
 
     /* Main container */
-    .container {
-        max-width: 800px !important;
-        padding: 3rem 2rem !important;
+    .spawn-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2rem;
     }
 
-    .container h1 {
-        font-size: 2rem !important;
-        font-weight: 600 !important;
-        color: var(--text-primary) !important;
-        margin-bottom: 2rem !important;
+    .spawn-header {
+        text-align: center;
+        margin-bottom: 3rem;
     }
 
-    /* Override KubeSpawner default styles */
-    #kubespawner-profiles-list {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 1rem !important;
+    .spawn-header h1 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
     }
 
-    #kubespawner-profiles-list .profile {
-        background: var(--bg-secondary) !important;
-        border: 2px solid var(--border-color) !important;
-        border-radius: 16px !important;
-        padding: 2rem !important;
-        cursor: default !important;
-        transition: all 0.3s ease !important;
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 0.5rem !important;
-        margin: 0 !important;
+    .spawn-header p {
+        color: var(--text-secondary);
+        font-size: 1rem;
     }
 
-    /* When there's only one profile with options, hide the radio and make it full width */
-    #kubespawner-profiles-list .profile:only-child {
-        border-color: var(--accent-blue) !important;
-        background: linear-gradient(135deg, rgba(33, 150, 243, 0.05) 0%, rgba(0, 188, 212, 0.05) 100%) !important;
+    /* Section */
+    .section {
+        margin-bottom: 2.5rem;
     }
 
-    #kubespawner-profiles-list .profile:only-child .radio {
-        display: none !important;
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
     }
 
-    /* Multiple profiles - keep original styling */
-    #kubespawner-profiles-list .profile:not(:only-child) {
-        flex-direction: row !important;
-        align-items: flex-start !important;
-        cursor: pointer !important;
-        padding: 1.5rem !important;
+    .section-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
     }
 
-    #kubespawner-profiles-list .profile:not(:only-child):hover {
-        border-color: var(--accent-blue) !important;
-        box-shadow: var(--shadow-glow) !important;
+    .section-icon.resources { background: rgba(33, 150, 243, 0.2); color: var(--accent-blue); }
+    .section-icon.images { background: rgba(0, 188, 212, 0.2); color: var(--accent-cyan); }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .cards-grid.resources { grid-template-columns: repeat(3, 1fr); }
+    .cards-grid.images { grid-template-columns: repeat(2, 1fr); }
+
+    @media (max-width: 768px) {
+        .cards-grid.resources, .cards-grid.images { grid-template-columns: 1fr; }
+    }
+
+    /* Card */
+    .option-card {
+        background: var(--bg-card);
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.25rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .option-card:hover {
+        border-color: var(--accent-blue);
         transform: translateY(-2px);
     }
 
-    #kubespawner-profiles-list .profile:has(input:checked) {
-        border-color: var(--accent-blue) !important;
-        background: rgba(33, 150, 243, 0.1) !important;
-        box-shadow: var(--shadow-glow) !important;
+    .option-card.selected {
+        border-color: var(--accent-blue);
+        background: rgba(33, 150, 243, 0.08);
+        box-shadow: var(--shadow-glow);
     }
 
-    #kubespawner-profiles-list .profile .radio {
-        padding: 4px 0 0 0 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
+    .option-card.selected::after {
+        content: '✓';
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 22px;
+        height: 22px;
+        background: var(--gradient-primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: white;
+        font-weight: bold;
     }
 
-    #kubespawner-profiles-list .profile .radio input[type="radio"] {
-        width: 20px !important;
-        height: 20px !important;
-        accent-color: var(--accent-blue) !important;
-        cursor: pointer !important;
-        margin: 0 !important;
+    .card-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        background: var(--bg-tertiary);
     }
 
-    #kubespawner-profiles-list .profile > div:last-child {
-        flex: 1;
+    .card-icon.minimal { background: rgba(76, 175, 80, 0.15); color: var(--accent-green); }
+    .card-icon.standard { background: rgba(33, 150, 243, 0.15); color: var(--accent-blue); }
+    .card-icon.performance { background: rgba(255, 152, 0, 0.15); color: var(--accent-orange); }
+    .card-icon.datascience { background: rgba(33, 150, 243, 0.15); color: var(--accent-blue); }
+    .card-icon.tensorflow { background: rgba(255, 152, 0, 0.15); color: var(--accent-orange); }
+    .card-icon.pytorch { background: rgba(244, 67, 54, 0.15); color: #F44336; }
+    .card-icon.pyspark { background: rgba(0, 188, 212, 0.15); color: var(--accent-cyan); }
+
+    .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.35rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
-    #kubespawner-profiles-list .profile h3 {
-        color: var(--text-primary) !important;
-        font-size: 1.25rem !important;
-        font-weight: 600 !important;
-        margin: 0 0 0.5rem 0 !important;
-        font-family: 'Inter', sans-serif !important;
+    .card-badge {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: 500;
+        background: rgba(33, 150, 243, 0.2);
+        color: var(--accent-cyan);
     }
 
-    #kubespawner-profiles-list .profile p {
-        color: var(--text-secondary) !important;
-        font-size: 0.9rem !important;
-        margin: 0 0 1.5rem 0 !important;
-        font-family: 'Inter', sans-serif !important;
+    .card-badge.popular {
+        background: rgba(156, 39, 176, 0.2);
+        color: #CE93D8;
     }
 
-    /* Profile options container */
-    #kubespawner-profiles-list .profile .options-container,
-    #kubespawner-profiles-list .profile .js-options-container {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 1.5rem !important;
-        margin-top: 0.5rem !important;
+    .card-description {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        line-height: 1.4;
     }
 
-    /* Profile options (dropdowns) - Section styling */
-    #kubespawner-profiles-list .profile .option {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 0.75rem !important;
-        margin-top: 0 !important;
-        padding: 0 !important;
-        padding-bottom: 1rem !important;
-        border-bottom: 1px solid var(--border-color) !important;
+    .card-specs {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
     }
 
-    #kubespawner-profiles-list .profile .option:last-child {
-        border-bottom: none !important;
-        padding-bottom: 0 !important;
+    .spec-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+        color: var(--text-muted);
     }
 
-    #kubespawner-profiles-list .profile .option label {
-        color: var(--accent-cyan) !important;
-        font-size: 0.9rem !important;
-        font-weight: 600 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 0.5rem !important;
-    }
-
-    #kubespawner-profiles-list .profile .option label::before {
-        content: '⚡' !important;
-        font-size: 1rem !important;
-    }
-
-    #kubespawner-profiles-list .profile .option select,
-    #kubespawner-profiles-list .profile .option input[type="text"] {
-        background: var(--bg-tertiary) !important;
-        border: 2px solid var(--border-color) !important;
-        color: var(--text-primary) !important;
-        padding: 0.875rem 1.25rem !important;
-        border-radius: 10px !important;
-        font-family: 'Inter', sans-serif !important;
-        font-size: 0.95rem !important;
-        cursor: pointer !important;
-        width: 100% !important;
-        transition: all 0.2s ease !important;
-        appearance: none !important;
-        -webkit-appearance: none !important;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238B949E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
-        background-repeat: no-repeat !important;
-        background-position: right 1rem center !important;
-        background-size: 1.25rem !important;
-        padding-right: 3rem !important;
-    }
-
-    #kubespawner-profiles-list .profile .option select:hover,
-    #kubespawner-profiles-list .profile .option input[type="text"]:hover {
-        border-color: var(--accent-blue) !important;
-    }
-
-    #kubespawner-profiles-list .profile .option select:focus,
-    #kubespawner-profiles-list .profile .option input[type="text"]:focus {
-        outline: none !important;
-        border-color: var(--accent-blue) !important;
-        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2) !important;
-    }
-
-    /* Select option styling (for dropdown items) */
-    #kubespawner-profiles-list .profile .option select option {
-        background: var(--bg-tertiary) !important;
-        color: var(--text-primary) !important;
-        padding: 0.75rem 1rem !important;
-    }
-
-    /* Other input container (unlisted choice) */
-    #kubespawner-profiles-list .profile .js-other-input-container {
-        margin-top: 0.75rem !important;
-    }
-
-    #kubespawner-profiles-list .profile .js-other-input-container input {
-        background: var(--bg-tertiary) !important;
-        border: 2px solid var(--border-color) !important;
-        color: var(--text-primary) !important;
-        padding: 0.875rem 1.25rem !important;
-        border-radius: 10px !important;
-        font-family: 'JetBrains Mono', monospace !important;
-        font-size: 0.9rem !important;
-        width: 100% !important;
-        transition: all 0.2s ease !important;
-    }
-
-    #kubespawner-profiles-list .profile .js-other-input-container input:focus {
-        outline: none !important;
-        border-color: var(--accent-blue) !important;
-        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.2) !important;
-    }
-
-    #kubespawner-profiles-list .profile .js-other-input-container input::placeholder {
-        color: var(--text-muted) !important;
+    .spec-item i {
+        font-size: 0.75rem;
+        color: var(--accent-cyan);
+        width: 14px;
     }
 
     /* Submit Button */
-    .feedback-container {
-        margin-top: 2rem !important;
+    .submit-container {
+        text-align: center;
+        margin-top: 2.5rem;
     }
 
-    .btn-jupyter,
-    #spawn_form button[type="submit"],
-    #spawn_form .btn,
-    .form-control[type="submit"] {
-        width: 100% !important;
+    .submit-btn {
         background: var(--gradient-primary) !important;
         border: none !important;
         color: white !important;
-        padding: 1rem 2rem !important;
+        padding: 1rem 3rem !important;
         font-size: 1rem !important;
         font-weight: 600 !important;
-        border-radius: 8px !important;
+        border-radius: 10px !important;
         cursor: pointer !important;
         transition: all 0.3s ease !important;
-        font-family: 'Inter', sans-serif !important;
-        text-transform: none !important;
-        letter-spacing: 0 !important;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
-    .btn-jupyter:hover,
-    #spawn_form button[type="submit"]:hover,
-    #spawn_form .btn:hover,
-    .form-control[type="submit"]:hover {
+    .submit-btn:hover {
         transform: translateY(-2px) !important;
         box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4) !important;
     }
 
-    .btn-jupyter:disabled,
-    #spawn_form button[type="submit"]:disabled {
-        opacity: 0.7 !important;
+    .submit-btn:disabled {
+        opacity: 0.6 !important;
         cursor: not-allowed !important;
         transform: none !important;
     }
 
-    /* Feedback widget (loading spinner) */
-    .feedback-widget {
-        display: flex !important;
-        justify-content: center !important;
-        margin-top: 1rem !important;
+    .submit-hint {
+        margin-top: 0.75rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
     }
 
-    .feedback-widget .fa-spinner {
-        color: var(--accent-blue) !important;
-        font-size: 1.5rem !important;
+    /* Loading spinner */
+    .spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
     }
 
-    .hidden {
-        display: none !important;
+    @keyframes spin {
+        to { transform: rotate(360deg); }
     }
 
-    /* Modal styling */
-    .modal-content {
-        background: var(--bg-secondary) !important;
-        border: 1px solid var(--border-color) !important;
-        border-radius: 12px !important;
-        color: var(--text-primary) !important;
-    }
-
-    .modal-header {
-        border-bottom: 1px solid var(--border-color) !important;
-    }
-
-    .modal-footer {
-        border-top: 1px solid var(--border-color) !important;
-    }
-
-    .modal-title {
-        color: var(--text-primary) !important;
-    }
-
-    .btn-close {
-        filter: invert(1) !important;
-    }
-
-    .alert-danger {
-        background: rgba(244, 67, 54, 0.1) !important;
-        border: 1px solid #F44336 !important;
-        color: #F44336 !important;
-        border-radius: 8px !important;
-        padding: 1rem !important;
-    }
-
-    /* JupyterHub logo override */
-    #jupyterhub-logo .jpy-logo {
-        filter: brightness(0) invert(1);
-        height: 40px;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-        .container {
-            padding: 2rem 1rem !important;
-        }
-
-        .container h1 {
-            font-size: 1.5rem !important;
-        }
-
-        #kubespawner-profiles-list .profile {
-            padding: 1rem !important;
-        }
-    }
+    .loading .spinner { display: block; }
+    .loading .btn-text { display: none; }
 </style>
 {% endblock %}
 
 {% block main %}
-<div class="container">
-    <div class="row text-center">
-        <h1>Server Options</h1>
+<div class="spawn-container">
+    <div class="spawn-header">
+        <h1>Configure seu Ambiente</h1>
+        <p>Escolha os recursos e a imagem para seu servidor Jupyter</p>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <form enctype="multipart/form-data" id="spawn_form" action="{{url}}" method="post" role="form">
-                {{ spawner_options_form | safe }}
-                <br>
-                <div class="feedback-container">
-                    <button type="submit" class="btn btn-jupyter form-control">Start Server</button>
-                    <div class="feedback-widget hidden">
-                        <i class="fa fa-spinner fa-pulse"></i>
+
+    <form id="spawn-form" action="{{url}}" method="post">
+        <!-- Hidden fields for actual form submission -->
+        <input type="hidden" name="profile" value="jupyter-environment">
+        <input type="hidden" name="profile--jupyter-environment--resources" id="selected-resources" value="minimal">
+        <input type="hidden" name="profile--jupyter-environment--image" id="selected-image" value="datascience">
+
+        <!-- Resources Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon resources">
+                    <i class="fa fa-server"></i>
+                </div>
+                <span class="section-title">Recursos do Servidor</span>
+            </div>
+            <div class="cards-grid resources">
+                <div class="option-card selected" data-type="resources" data-value="minimal">
+                    <div class="card-icon minimal">
+                        <i class="fa fa-leaf"></i>
+                    </div>
+                    <div class="card-title">Minimal</div>
+                    <div class="card-description">Para tarefas leves e exploração de dados</div>
+                    <div class="card-specs">
+                        <div class="spec-item"><i class="fa fa-microchip"></i> 2 vCPUs</div>
+                        <div class="spec-item"><i class="fa fa-memory"></i> 4 GB RAM</div>
                     </div>
                 </div>
-            </form>
+                <div class="option-card" data-type="resources" data-value="standard">
+                    <div class="card-icon standard">
+                        <i class="fa fa-cube"></i>
+                    </div>
+                    <div class="card-title">Standard <span class="card-badge popular">Popular</span></div>
+                    <div class="card-description">Ideal para análises e machine learning</div>
+                    <div class="card-specs">
+                        <div class="spec-item"><i class="fa fa-microchip"></i> 4 vCPUs</div>
+                        <div class="spec-item"><i class="fa fa-memory"></i> 16 GB RAM</div>
+                    </div>
+                </div>
+                <div class="option-card" data-type="resources" data-value="performance">
+                    <div class="card-icon performance">
+                        <i class="fa fa-bolt"></i>
+                    </div>
+                    <div class="card-title">Performance</div>
+                    <div class="card-description">Para modelos complexos e grandes datasets</div>
+                    <div class="card-specs">
+                        <div class="spec-item"><i class="fa fa-microchip"></i> 8 vCPUs</div>
+                        <div class="spec-item"><i class="fa fa-memory"></i> 32 GB RAM</div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+
+        <!-- Images Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon images">
+                    <i class="fa fa-docker"></i>
+                </div>
+                <span class="section-title">Imagem do Container</span>
+            </div>
+            <div class="cards-grid images">
+                <div class="option-card selected" data-type="image" data-value="datascience">
+                    <div class="card-icon datascience">
+                        <i class="fa fa-chart-bar"></i>
+                    </div>
+                    <div class="card-title">Data Science <span class="card-badge">Python 3.11</span></div>
+                    <div class="card-description">NumPy, Pandas, Scikit-learn, Matplotlib</div>
+                </div>
+                <div class="option-card" data-type="image" data-value="tensorflow">
+                    <div class="card-icon tensorflow">
+                        <i class="fa fa-brain"></i>
+                    </div>
+                    <div class="card-title">TensorFlow <span class="card-badge">TF 2.15</span></div>
+                    <div class="card-description">Deep Learning com TensorFlow e Keras</div>
+                </div>
+                <div class="option-card" data-type="image" data-value="pytorch">
+                    <div class="card-icon pytorch">
+                        <i class="fa fa-fire"></i>
+                    </div>
+                    <div class="card-title">PyTorch <span class="card-badge">PT 2.1</span></div>
+                    <div class="card-description">Deep Learning com PyTorch e Lightning</div>
+                </div>
+                <div class="option-card" data-type="image" data-value="pyspark">
+                    <div class="card-icon pyspark">
+                        <i class="fa fa-database"></i>
+                    </div>
+                    <div class="card-title">PySpark <span class="card-badge">Spark 3.5</span></div>
+                    <div class="card-description">Processamento distribuído com Apache Spark</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="submit-container">
+            <button type="submit" class="submit-btn">
+                <i class="fa fa-rocket btn-text"></i>
+                <span class="btn-text">Iniciar Servidor</span>
+                <div class="spinner"></div>
+            </button>
+            <div class="submit-hint">Tempo estimado: ~30 segundos</div>
+        </div>
+    </form>
+</div>
+
+<!-- Keep original form for fallback -->
+<div style="display:none;">
+    {{ spawner_options_form | safe }}
 </div>
 
 <script>
-    // Setup onSubmit feedback
-    $('form').submit((e) => {
-        var form = $(e.target);
-        form.find('.feedback-container>button').attr('disabled', true);
-        form.find('.feedback-container>*').toggleClass('hidden');
+document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.option-card');
+    const resourcesInput = document.getElementById('selected-resources');
+    const imageInput = document.getElementById('selected-image');
+    const form = document.getElementById('spawn-form');
+
+    cards.forEach(card => {
+        card.addEventListener('click', function() {
+            const type = this.dataset.type;
+            const value = this.dataset.value;
+
+            // Remove selected from same type cards
+            document.querySelectorAll(`.option-card[data-type="${type}"]`).forEach(c => {
+                c.classList.remove('selected');
+            });
+
+            // Select this card
+            this.classList.add('selected');
+
+            // Update hidden input
+            if (type === 'resources') {
+                resourcesInput.value = value;
+            } else if (type === 'image') {
+                imageInput.value = value;
+            }
+        });
     });
+
+    // Form submit loading state
+    form.addEventListener('submit', function(e) {
+        const btn = this.querySelector('.submit-btn');
+        btn.classList.add('loading');
+        btn.disabled = true;
+    });
+});
 </script>
 {% endblock %}
