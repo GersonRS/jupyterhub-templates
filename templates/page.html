@@ -6,7 +6,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-    :root {
+    /* Dark theme (default) */
+    :root, [data-bs-theme="dark"] {
         --bg-primary: #0D1117;
         --bg-secondary: #161B22;
         --bg-tertiary: #21262D;
@@ -22,6 +23,25 @@
         --accent-red: #F44336;
         --gradient-primary: linear-gradient(135deg, #2196F3 0%, #00BCD4 100%);
         --shadow-glow: 0 0 20px rgba(33, 150, 243, 0.3);
+    }
+
+    /* Light theme */
+    [data-bs-theme="light"] {
+        --bg-primary: #FFFFFF;
+        --bg-secondary: #F6F8FA;
+        --bg-tertiary: #EAEEF2;
+        --bg-card: #FFFFFF;
+        --border-color: #D0D7DE;
+        --text-primary: #1F2328;
+        --text-secondary: #656D76;
+        --text-muted: #8C959F;
+        --accent-blue: #0969DA;
+        --accent-cyan: #0891B2;
+        --accent-green: #1A7F37;
+        --accent-orange: #D97706;
+        --accent-red: #CF222E;
+        --gradient-primary: linear-gradient(135deg, #0969DA 0%, #0891B2 100%);
+        --shadow-glow: 0 0 20px rgba(9, 105, 218, 0.2);
     }
 
     body {
