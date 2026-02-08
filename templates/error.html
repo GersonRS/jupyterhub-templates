@@ -1,33 +1,240 @@
-{% extends "templates/error.html" %}
+{% extends "page.html" %}
 
-{% block error_detail %}
-{% if status_code == 403 %}
-<style>
-	.info {
-  		color: #fc8703;
-  		background-color: #f2f2f3;
-		
-		max-width: 640px;
-		padding: 30px;
-		margin: 0 auto;
-		margin-bottom: 30px;
-		overflow: hidden;
-		font-size: 17px;
-	}
-</style>
-<div class="error">
-	<div class="info">
-		<i class="fa fa-info-circle"></i>
-		Looks like you have <b>NOT</b> been added to the list of allowed users for this hub. Please contact the hub administrators.
-	</div>
-	<div class="text-center">
-		<a role="button" class='btn btn-jupyter' href='{{base_url}}/logout'>
-		Tap to try a different account
-		</a>
-	</div>
-</div>
-{% else %}
+{% block stylesheet %}
 {{ super() }}
-{% endif %}
+<style>
+    .error-container {
+        min-height: calc(100vh - 100px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+    }
 
-{% endblock error_detail %}
+    .error-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2.5rem;
+        max-width: 550px;
+        width: 100%;
+    }
+
+    .error-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(244, 67, 54, 0.15);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .error-icon i {
+        font-size: 2.5rem;
+        color: var(--accent-red);
+    }
+
+    .error-icon.warning {
+        background: rgba(255, 152, 0, 0.15);
+    }
+
+    .error-icon.warning i {
+        color: var(--accent-orange);
+    }
+
+    .error-code {
+        font-size: 3rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #F44336 0%, #FF9800 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .error-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .error-message {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .error-detail {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.85rem;
+        color: var(--accent-orange);
+        text-align: left;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .info-box {
+        background: rgba(255, 152, 0, 0.1);
+        border: 1px solid rgba(255, 152, 0, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        text-align: left;
+    }
+
+    .info-box i {
+        color: var(--accent-orange);
+        font-size: 1.25rem;
+        margin-top: 2px;
+    }
+
+    .info-box p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .info-box strong {
+        color: var(--text-primary);
+    }
+
+    .error-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        background: var(--gradient-primary);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .btn-action:hover {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+    }
+
+    .btn-secondary {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+    }
+
+    .btn-secondary:hover {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+        background: var(--bg-tertiary);
+        box-shadow: none;
+        transform: none;
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="error-container">
+    <div class="error-card">
+        {% if status_code == 403 %}
+        <div class="error-icon warning">
+            <i class="fa fa-ban"></i>
+        </div>
+        <div class="error-code">403</div>
+        <h1 class="error-title">Acesso Negado</h1>
+        
+        <div class="info-box">
+            <i class="fa fa-info-circle"></i>
+            <p>
+                Parece que você <strong>não foi adicionado</strong> à lista de usuários permitidos para este hub. 
+                Entre em contato com os administradores.
+            </p>
+        </div>
+
+        <div class="error-actions">
+            <a href="{{ base_url }}/logout" class="btn-action">
+                <i class="fa fa-sign-out"></i>
+                Tentar outra conta
+            </a>
+        </div>
+
+        {% elif status_code == 404 %}
+        <div class="error-icon">
+            <i class="fa fa-compass"></i>
+        </div>
+        <div class="error-code">404</div>
+        <h1 class="error-title">Página não encontrada</h1>
+        <p class="error-message">
+            A página que você está procurando não existe ou foi movida.
+        </p>
+        <div class="error-actions">
+            <a href="/hub/home" class="btn-action">
+                <i class="fa fa-home"></i>
+                Voltar para Home
+            </a>
+        </div>
+
+        {% elif status_code == 500 %}
+        <div class="error-icon">
+            <i class="fa fa-exclamation-triangle"></i>
+        </div>
+        <div class="error-code">500</div>
+        <h1 class="error-title">Erro Interno</h1>
+        <p class="error-message">
+            Algo deu errado no servidor. Nossa equipe foi notificada.
+        </p>
+        {% if message %}
+        <div class="error-detail">{{ message }}</div>
+        {% endif %}
+        <div class="error-actions">
+            <a href="/hub/home" class="btn-action">
+                <i class="fa fa-home"></i>
+                Voltar para Home
+            </a>
+            <a href="javascript:location.reload()" class="btn-action btn-secondary">
+                <i class="fa fa-refresh"></i>
+                Tentar novamente
+            </a>
+        </div>
+
+        {% else %}
+        <div class="error-icon">
+            <i class="fa fa-exclamation-circle"></i>
+        </div>
+        <div class="error-code">{{ status_code }}</div>
+        <h1 class="error-title">{{ status_message or 'Erro' }}</h1>
+        <p class="error-message">
+            {{ message or 'Ocorreu um erro inesperado.' }}
+        </p>
+        <div class="error-actions">
+            <a href="/hub/home" class="btn-action">
+                <i class="fa fa-home"></i>
+                Voltar para Home
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

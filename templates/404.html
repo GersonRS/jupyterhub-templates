@@ -1,0 +1,96 @@
+{% extends "page.html" %}
+
+{% block stylesheet %}
+{{ super() }}
+<style>
+    .error-container {
+        min-height: calc(100vh - 100px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .error-code {
+        font-size: 8rem;
+        font-weight: 700;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1;
+        margin-bottom: 1rem;
+    }
+
+    .error-title {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .error-message {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+        max-width: 500px;
+        margin-bottom: 2rem;
+    }
+
+    .error-icon {
+        width: 120px;
+        height: 120px;
+        background: var(--bg-secondary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+        border: 2px solid var(--border-color);
+    }
+
+    .error-icon i {
+        font-size: 3rem;
+        color: var(--accent-orange);
+    }
+
+    .btn-home {
+        background: var(--gradient-primary);
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .btn-home:hover {
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="error-container">
+    <div class="error-icon">
+        <i class="fa fa-compass"></i>
+    </div>
+    <div class="error-code">404</div>
+    <h1 class="error-title">Página não encontrada</h1>
+    <p class="error-message">
+        A página que você está procurando pode ter sido movida, removida ou nunca existiu.
+    </p>
+    <a href="/hub/home" class="btn-home">
+        <i class="fa fa-home"></i>
+        Voltar para Home
+    </a>
+</div>
+{% endblock %}

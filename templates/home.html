@@ -1,0 +1,332 @@
+{% extends "page.html" %}
+
+{% block stylesheet %}
+{{ super() }}
+<style>
+    .home-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .welcome-section {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding: 2rem;
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+    }
+
+    .welcome-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--gradient-primary);
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .welcome-icon i {
+        font-size: 2.5rem;
+        color: white;
+    }
+
+    .welcome-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+
+    .server-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .server-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .server-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .server-icon {
+        width: 48px;
+        height: 48px;
+        background: var(--bg-tertiary);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .server-icon i {
+        font-size: 1.25rem;
+        color: var(--accent-cyan);
+    }
+
+    .server-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .server-status {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+    .status-dot.running {
+        background: var(--accent-green);
+        box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    .status-dot.stopped {
+        background: var(--text-muted);
+    }
+
+    .server-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-action.primary {
+        background: var(--gradient-primary);
+        color: white;
+    }
+
+    .btn-action.primary:hover {
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+        color: white;
+    }
+
+    .btn-action.secondary {
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-color);
+    }
+
+    .btn-action.secondary:hover {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+    }
+
+    .btn-action.danger {
+        background: transparent;
+        color: var(--accent-red);
+        border: 1px solid var(--accent-red);
+    }
+
+    .btn-action.danger:hover {
+        background: var(--accent-red);
+        color: white;
+    }
+
+    .no-server {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-secondary);
+    }
+
+    .no-server i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--text-muted);
+    }
+
+    .named-servers-section {
+        margin-top: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-title i {
+        color: var(--accent-cyan);
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="home-container">
+    <div class="welcome-section">
+        <div class="welcome-icon">
+            <i class="fa fa-rocket"></i>
+        </div>
+        <h1 class="welcome-title">Bem-vindo, {{ user.name }}!</h1>
+        <p class="welcome-subtitle">Gerencie seus servidores Jupyter</p>
+    </div>
+
+    {% if default_server %}
+    <div class="server-card">
+        <div class="server-header">
+            <div class="server-info">
+                <div class="server-icon">
+                    <i class="fa fa-server"></i>
+                </div>
+                <div>
+                    <div class="server-name">Meu Servidor</div>
+                    <div class="server-status">
+                        {% if default_server.active %}
+                        <span class="status-dot running"></span>
+                        Executando
+                        {% else %}
+                        <span class="status-dot stopped"></span>
+                        Parado
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="server-actions">
+                {% if default_server.active %}
+                <a href="{{ default_server.url }}" class="btn-action primary">
+                    <i class="fa fa-external-link"></i>
+                    Abrir
+                </a>
+                <a href="{{ default_server.stop_url }}" class="btn-action danger">
+                    <i class="fa fa-stop"></i>
+                    Parar
+                </a>
+                {% elif default_server.pending %}
+                <span class="btn-action secondary">
+                    <i class="fa fa-spinner fa-spin"></i>
+                    {{ default_server.pending }}...
+                </span>
+                {% else %}
+                <a href="{{ spawn_url }}" class="btn-action primary">
+                    <i class="fa fa-play"></i>
+                    Iniciar
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="server-card">
+        <div class="no-server">
+            <i class="fa fa-cube"></i>
+            <p>Nenhum servidor configurado</p>
+            <a href="{{ spawn_url }}" class="btn-action primary" style="margin-top: 1rem;">
+                <i class="fa fa-plus"></i>
+                Criar Servidor
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if named_server_limit > 0 %}
+    <div class="named-servers-section">
+        <h2 class="section-title">
+            <i class="fa fa-layer-group"></i>
+            Servidores Nomeados
+        </h2>
+        
+        {% for server in servers %}
+        {% if server.name %}
+        <div class="server-card">
+            <div class="server-header">
+                <div class="server-info">
+                    <div class="server-icon">
+                        <i class="fa fa-cube"></i>
+                    </div>
+                    <div>
+                        <div class="server-name">{{ server.name }}</div>
+                        <div class="server-status">
+                            {% if server.active %}
+                            <span class="status-dot running"></span>
+                            Executando
+                            {% else %}
+                            <span class="status-dot stopped"></span>
+                            Parado
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="server-actions">
+                    {% if server.active %}
+                    <a href="{{ server.url }}" class="btn-action primary">
+                        <i class="fa fa-external-link"></i>
+                        Abrir
+                    </a>
+                    <a href="{{ server.stop_url }}" class="btn-action danger">
+                        <i class="fa fa-stop"></i>
+                        Parar
+                    </a>
+                    {% elif server.pending %}
+                    <span class="btn-action secondary">
+                        <i class="fa fa-spinner fa-spin"></i>
+                        {{ server.pending }}...
+                    </span>
+                    {% else %}
+                    <a href="{{ server.spawn_url }}" class="btn-action primary">
+                        <i class="fa fa-play"></i>
+                        Iniciar
+                    </a>
+                    <form action="{{ server.delete_url }}" method="post" style="display: inline;">
+                        <button type="submit" class="btn-action danger">
+                            <i class="fa fa-trash"></i>
+                            Excluir
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        {% if (servers | length) < named_server_limit %}
+        <a href="{{ new_server_url }}" class="btn-action secondary" style="margin-top: 0.5rem;">
+            <i class="fa fa-plus"></i>
+            Novo Servidor Nomeado
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

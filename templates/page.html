@@ -1,0 +1,276 @@
+{% extends "templates/page.html" %}
+
+{% block stylesheet %}
+{{ super() }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg-primary: #0D1117;
+        --bg-secondary: #161B22;
+        --bg-tertiary: #21262D;
+        --bg-card: #1A1F26;
+        --border-color: #30363D;
+        --text-primary: #F0F6FC;
+        --text-secondary: #8B949E;
+        --text-muted: #6E7681;
+        --accent-blue: #2196F3;
+        --accent-cyan: #00BCD4;
+        --accent-green: #4CAF50;
+        --accent-orange: #FF9800;
+        --accent-red: #F44336;
+        --gradient-primary: linear-gradient(135deg, #2196F3 0%, #00BCD4 100%);
+        --shadow-glow: 0 0 20px rgba(33, 150, 243, 0.3);
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        background: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+        min-height: 100vh;
+    }
+
+    /* Override Bootstrap navbar */
+    .navbar {
+        background: var(--bg-secondary) !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        padding: 0.75rem 1.5rem !important;
+    }
+
+    .navbar-brand, .navbar a {
+        color: var(--text-primary) !important;
+    }
+
+    .nav-link {
+        color: var(--text-secondary) !important;
+        transition: color 0.2s !important;
+    }
+
+    .nav-link:hover {
+        color: var(--text-primary) !important;
+    }
+
+    #login_widget span {
+        color: var(--text-secondary) !important;
+    }
+
+    .btn-outline-contrast {
+        border-color: var(--border-color) !important;
+        color: var(--text-secondary) !important;
+        transition: all 0.2s !important;
+    }
+
+    .btn-outline-contrast:hover {
+        border-color: var(--accent-blue) !important;
+        color: var(--accent-blue) !important;
+        background: transparent !important;
+    }
+
+    #dark-theme-toggle {
+        color: var(--text-secondary) !important;
+    }
+
+    #jupyterhub-logo .jpy-logo {
+        filter: brightness(0) invert(1);
+        height: 36px;
+    }
+
+    /* Container */
+    .container {
+        color: var(--text-primary);
+    }
+
+    /* Cards */
+    .card {
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 12px !important;
+    }
+
+    .card-header {
+        background: var(--bg-tertiary) !important;
+        border-bottom: 1px solid var(--border-color) !important;
+        color: var(--text-primary) !important;
+    }
+
+    /* Tables */
+    .table {
+        color: var(--text-primary) !important;
+    }
+
+    .table thead th {
+        background: var(--bg-tertiary) !important;
+        border-color: var(--border-color) !important;
+        color: var(--text-secondary) !important;
+    }
+
+    .table tbody td {
+        border-color: var(--border-color) !important;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background: var(--bg-secondary) !important;
+    }
+
+    .table-hover tbody tr:hover {
+        background: var(--bg-tertiary) !important;
+    }
+
+    /* Forms */
+    .form-control {
+        background: var(--bg-tertiary) !important;
+        border: 1px solid var(--border-color) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .form-control:focus {
+        border-color: var(--accent-blue) !important;
+        box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2) !important;
+    }
+
+    .form-control::placeholder {
+        color: var(--text-muted) !important;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: var(--gradient-primary) !important;
+        border: none !important;
+        color: white !important;
+    }
+
+    .btn-primary:hover {
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4) !important;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background: var(--bg-tertiary) !important;
+        border: 1px solid var(--border-color) !important;
+        color: var(--text-secondary) !important;
+    }
+
+    .btn-danger {
+        background: var(--accent-red) !important;
+        border: none !important;
+    }
+
+    .btn-success {
+        background: var(--accent-green) !important;
+        border: none !important;
+    }
+
+    /* Alerts */
+    .alert {
+        border-radius: 8px !important;
+        border: none !important;
+    }
+
+    .alert-danger {
+        background: rgba(244, 67, 54, 0.15) !important;
+        color: #ff6b6b !important;
+        border: 1px solid rgba(244, 67, 54, 0.3) !important;
+    }
+
+    .alert-success {
+        background: rgba(76, 175, 80, 0.15) !important;
+        color: #69f0ae !important;
+        border: 1px solid rgba(76, 175, 80, 0.3) !important;
+    }
+
+    .alert-warning {
+        background: rgba(255, 152, 0, 0.15) !important;
+        color: #ffb74d !important;
+        border: 1px solid rgba(255, 152, 0, 0.3) !important;
+    }
+
+    .alert-info {
+        background: rgba(33, 150, 243, 0.15) !important;
+        color: #64b5f6 !important;
+        border: 1px solid rgba(33, 150, 243, 0.3) !important;
+    }
+
+    /* Modal */
+    .modal-content {
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 12px !important;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--border-color) !important;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--border-color) !important;
+    }
+
+    .modal-title {
+        color: var(--text-primary) !important;
+    }
+
+    .btn-close {
+        filter: invert(1) !important;
+    }
+
+    /* Links */
+    a {
+        color: var(--accent-blue);
+    }
+
+    a:hover {
+        color: var(--accent-cyan);
+    }
+
+    /* Code */
+    code, pre {
+        background: var(--bg-tertiary) !important;
+        color: var(--accent-cyan) !important;
+        border-radius: 4px;
+        padding: 2px 6px;
+    }
+
+    pre {
+        padding: 1rem !important;
+        border: 1px solid var(--border-color) !important;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 {
+        color: var(--text-primary) !important;
+    }
+
+    /* Progress */
+    .progress {
+        background: var(--bg-tertiary) !important;
+        border-radius: 8px !important;
+    }
+
+    .progress-bar {
+        background: var(--gradient-primary) !important;
+    }
+
+    /* Badge */
+    .badge {
+        font-weight: 500 !important;
+    }
+
+    .badge.bg-primary {
+        background: var(--accent-blue) !important;
+    }
+
+    .badge.bg-success {
+        background: var(--accent-green) !important;
+    }
+
+    .badge.bg-danger {
+        background: var(--accent-red) !important;
+    }
+
+    .badge.bg-warning {
+        background: var(--accent-orange) !important;
+        color: #000 !important;
+    }
+</style>
+{% endblock %}

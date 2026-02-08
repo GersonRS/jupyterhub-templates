@@ -1,0 +1,176 @@
+{% extends "page.html" %}
+
+{% block stylesheet %}
+{{ super() }}
+<style>
+    .oauth-container {
+        min-height: calc(100vh - 100px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .oauth-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2.5rem;
+        max-width: 450px;
+        width: 100%;
+    }
+
+    .oauth-icon {
+        width: 70px;
+        height: 70px;
+        background: var(--gradient-primary);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+
+    .oauth-icon i {
+        font-size: 2rem;
+        color: white;
+    }
+
+    .oauth-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .oauth-description {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+    }
+
+    .oauth-app {
+        background: var(--bg-tertiary);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .app-name {
+        font-weight: 600;
+        color: var(--accent-cyan);
+        font-size: 1.1rem;
+    }
+
+    .app-scopes {
+        margin-top: 0.5rem;
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .scopes-list {
+        margin-top: 1rem;
+        text-align: left;
+    }
+
+    .scope-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .scope-item i {
+        color: var(--accent-green);
+        font-size: 0.8rem;
+    }
+
+    .oauth-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-authorize {
+        flex: 1;
+        background: var(--gradient-primary);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-authorize:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+    }
+
+    .btn-cancel {
+        flex: 1;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+        border-color: var(--accent-red);
+        color: var(--accent-red);
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<div class="oauth-container">
+    <div class="oauth-card">
+        <div class="oauth-icon">
+            <i class="fa fa-shield"></i>
+        </div>
+        <h1 class="oauth-title">Autorização Solicitada</h1>
+        <p class="oauth-description">
+            Uma aplicação está solicitando acesso à sua conta
+        </p>
+
+        <div class="oauth-app">
+            <div class="app-name">{{ client.description or client_id }}</div>
+            <div class="app-scopes">ID: {{ client_id }}</div>
+        </div>
+
+        <div class="scopes-list">
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.5rem;">
+                Esta aplicação terá acesso a:
+            </p>
+            {% for scope in scopes %}
+            <div class="scope-item">
+                <i class="fa fa-check"></i>
+                {{ scope }}
+            </div>
+            {% endfor %}
+        </div>
+
+        <form action="{{ oauth_approval_url }}" method="post">
+            <input type="hidden" name="scopes" value="{{ scopes | join(' ') }}">
+            <div class="oauth-actions">
+                <button type="submit" name="submit" value="deny" class="btn-cancel">
+                    Recusar
+                </button>
+                <button type="submit" name="submit" value="authorize" class="btn-authorize">
+                    Autorizar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
